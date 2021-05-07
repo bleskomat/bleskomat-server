@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres:10
+    container_name: bleskomat-server-db
+    restart: always
+    expose:
+      - 5432
+    volumes:
+      - db_datadir:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      - POSTGRES_DB=bleskomat_server
+      - POSTGRES_USER=bleskomat_server
+      - POSTGRES_PASSWORD=XXX
+
+  web:
+    image: bleskomat-server
+    container_name: bleskomat-server-web
+    restart: always
+    init: true
+    ports:
+      - 127.0.0.1:3000:3000
+    networks:
+      - backend
+    environment:
+      - DEBUG=lnurl*
+      - BLESKOMAT_SERVER_HOST=0.0.0.0
+      - BLESKOMAT_SERVER_PORT=3000
+      - BLESKOMAT_SERVER_URL=https://DOMAINNAME
+      - BLESKOMAT_SERVER_ENDPOINT=/u
+      - BLESKOMAT_SERVER_AUTH_API_KEYS=[]
+      - BLESKOMAT_SERVER_LIGHTNING={"backend":"dummy","config":{}}
+      - BLESKOMAT_SERVER_STORE={"backend":"knex","config":{"client":"postgres","connection":{"host":"bleskomat-server-db","port":5432,"user":"bleskomat_server","password":"XXX","database":"bleskomat_server"}}}
+
+volumes:
+  db_datadir:
+
+networks:
+  backend:

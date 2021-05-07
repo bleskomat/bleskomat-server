@@ -1,0 +1,46 @@
+{
+  "name": "bleskomat-server",
+  "version": "1.0.0",
+  "description": "An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./index.js",
+    "test": "npm run test:unit",
+    "test:unit": "./node_modules/.bin/mocha --recursive ./test/unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samotari/bleskomat-server.git"
+  },
+  "author": {
+    "name": "Samotari",
+    "email": "crypto.samotari@gmail.com",
+    "url": "https://github.com/samotari"
+  },
+  "contributors": [
+    {
+      "name": "Charles Hill",
+      "email": "chill@degreesofzero.com"
+    },
+    {
+      "name": "Carlos Garcia Ortiz",
+      "email": "yo@carlosgarciaortiz.com"
+    }
+  ],
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/samotari/bleskomat-server/issues"
+  },
+  "homepage": "https://github.com/samotari/bleskomat-server",
+  "dependencies": {
+    "bignumber.js": "9.0.1",
+    "dotenv": "10.0.0",
+    "lnurl": "0.16.1"
+  },
+  "devDependencies": {
+    "chai": "4.3.4",
+    "mocha": "8.4.0",
+    "underscore": "1.13.1"
+  }
+}
