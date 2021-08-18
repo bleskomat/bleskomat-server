@@ -112,6 +112,20 @@ See [Generating a new API key](https://github.com/chill117/lnurl-node#generating
 * Exchange rates are queried using Coinbase's [/v2/exchange-rates](https://developers.coinbase.com/api/v2#exchange-rates) API end-point. The function that does this is defined in [./lib/getExchangeRate.js](https://github.com/samotari/bleskomat-server/blob/master/lib/getExchangeRate.js). If you prefer to use a different provider, that is the place to make your changes.
 
 
+## Docker Builds
+
+For configuring your system to support cross-platform docker builds, see [Building Multi-Architecture Docker Images With Buildx](https://medium.com/@artur.klauser/building-multi-architecture-docker-images-with-buildx-27d80f7e2408).
+
+To build and push docker images:
+```bash
+docker buildx build --platform linux/arm64,linux/amd64 \
+	--tag bleskomat/bleskomat-server:1.1.0 \
+	--tag bleskomat/bleskomat-server:latest \
+	--output "type=registry" .
+```
+This requires that you have already logged-in to docker with `docker login`.
+
+
 ## License
 
 The project is licensed under the [GNU Affero General Public License v3 (AGPL-3.0)](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)):
