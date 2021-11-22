@@ -4,6 +4,7 @@ An open-source web server that facilitates Lightning Network payments on behalf 
 
 * [Usage](#usage)
 * [Notes](#notes)
+* [Changelog](#changelog)
 * [License](#license)
 * [Trademark](#trademark)
 
@@ -124,6 +125,11 @@ docker buildx build --platform linux/arm64,linux/amd64 \
 	--output "type=registry" .
 ```
 This requires that you have already logged-in to docker with `docker login`.
+
+
+## Changelog
+
+See [CHANGELOG.md](https://github.com/samotari/bleskomat-server/blob/master/CHANGELOG.md)
 
 
 ## License
