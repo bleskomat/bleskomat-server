@@ -3,7 +3,6 @@
 An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
 * [Usage](#usage)
-* [Notes](#notes)
 * [Changelog](#changelog)
 * [License](#license)
 * [Trademark](#trademark)
@@ -105,12 +104,6 @@ docker run bleskomat/bleskomat-server ./node_modules/.bin/lnurl generateApiKey
 ```
 
 See [Generating a new API key](https://github.com/chill117/lnurl-node#generating-a-new-api-key) for further details.
-
-
-## Notes
-
-* It is strongly recommended to only serve LNURL-related requests via HTTPS.
-* Exchange rates are queried using Coinbase's [/v2/exchange-rates](https://developers.coinbase.com/api/v2#exchange-rates) API end-point. The function that does this is defined in [./lib/getExchangeRate.js](https://github.com/samotari/bleskomat-server/blob/master/lib/getExchangeRate.js). If you prefer to use a different provider, that is the place to make your changes.
 
 
 ## Docker Builds
