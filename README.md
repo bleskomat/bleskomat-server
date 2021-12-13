@@ -1,6 +1,6 @@
 # bleskomat-server
 
-An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
+An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat-diy) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
 * [Usage](#usage)
 	* [Usage with Nodejs](#usage-with-nodejs)
