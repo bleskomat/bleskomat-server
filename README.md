@@ -1,5 +1,7 @@
 # bleskomat-server
 
+![Build Status](https://github.com/samotari/bleskomat-server/actions/workflows/tests.yml/badge.svg)
+
 An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat-diy) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
 * [Usage](#usage)
