@@ -16,19 +16,30 @@
 */
 
 const _ = require('underscore');
+const coinRates = require('coin-rates');
 const { expect } = require('chai');
 const { createHash, generateApiKey, generatePaymentRequest } = require('lnurl/lib');
 const helpers = require('../../helpers');
 const { Server } = require('../../../lib');
 const url = require('url');
 
+coinRates.providers.push({
+	name: 'nonDefault',
+	url: 'http://localhost:3000/does-not-exist',
+	parseResponseBody: function(body) {
+		return '52501.00';
+	},
+});
+
 describe('Server(config)', function() {
 
-	let apiKey, config, server;
+	let apiKey, apiKeyNonDefault, config, server;
 	before(function(done) {
 		apiKey = generateApiKey();
+		apiKeyNonDefault = generateApiKey();
+		apiKeyNonDefault.exchangeRatesProvider = 'nonDefault';
 		config = require('../../../config');
-		config.lnurl.auth.apiKeys = [ apiKey ];
+		config.lnurl.auth.apiKeys = [ apiKey, apiKeyNonDefault ];
 		config.lnurl.store.config.noWarning = true;
 		server = new Server(config);
 		server.once('listening', done);
@@ -204,6 +215,31 @@ describe('Server(config)', function() {
 							expect(fetchedUrl2.remainingUses).to.equal(0);
 						});
 					});
+				});
+			});
+		});
+
+		describe('apiKey w/ non-default exchange rates provider', function() {
+
+			it('should use the correct exchange rates provider', function() {
+				return helpers.request({
+					method: 'GET',
+					hostname: config.lnurl.host,
+					port: config.lnurl.port,
+					path: config.lnurl.endpoint,
+					data: helpers.prepareSignedQuery(apiKeyNonDefault, {
+						tag: 'withdrawRequest',
+						fiatCurrency: 'EUR',
+						minWithdrawable: '1.00',
+						maxWithdrawable: '1.00',
+						defaultDescription: '',
+					}),
+				}).then(result => {
+					const { response, body } = result;
+					expect(response.statusCode).to.equal(200);
+					const json = JSON.parse(body);
+					expect(json.minWithdrawable).to.equal(1904000);
+					expect(json.maxWithdrawable).to.equal(1904000);
 				});
 			});
 		});
