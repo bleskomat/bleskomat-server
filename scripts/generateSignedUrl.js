@@ -16,7 +16,13 @@
 */
 
 const { createSignedUrl } = require('lnurl');
+const path = require('path');
+
+// https://github.com/motdotla/dotenv#usage
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const config = require('../config');
+
 let baseUrl;
 if (config.lnurl.url) {
 	baseUrl = `${config.lnurl.url}${config.lnurl.endpoint}`;

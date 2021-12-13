@@ -15,6 +15,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// https://github.com/motdotla/dotenv#usage
+require('dotenv').config();
+
 const config = require('./config');
 let server = require('./lib/Server')(config);
 

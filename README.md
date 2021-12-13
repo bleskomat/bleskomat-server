@@ -3,6 +3,13 @@
 An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
 * [Usage](#usage)
+	* [Usage with Nodejs](#usage-with-nodejs)
+	* [Usage with Docker](#usage-with-docker)
+	* [Usage with Docker Compose](#usage-with-docker-compose)
+	* [Configuration Options](#configuration-options)
+	* [How to generate API keys](#how-to-generate-api-keys)
+* [Tests](#tests)
+* [Docker Builds](#docker-builds)
 * [Changelog](#changelog)
 * [License](#license)
 * [Trademark](#trademark)
@@ -10,10 +17,7 @@ An open-source web server that facilitates Lightning Network payments on behalf 
 
 ## Usage
 
-It's possible to run the server in a number of ways:
-* [Usage with Nodejs](#usage-with-nodejs)
-* [Usage with Docker](#usage-with-docker)
-* [Usage with Docker Compose](#usage-with-docker-compose)
+It's possible to run this project directly using nodejs, as a docker container, and with docker compose.
 
 
 ### Usage with Nodejs
@@ -79,7 +83,7 @@ See the [examples/docker-compose](https://github.com/samotari/bleskomat-server/b
 Please refer to [Configuration Options](#configuration-options) for details about how to configure your server.
 
 
-## Configuration Options
+### Configuration Options
 
 Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_HOST` - The host on which the HTTP server listener will be bound.
@@ -89,6 +93,7 @@ Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_AUTH_API_KEYS` - An array of API keys that are authorized to create signed LNURLs for the server. See [How to generate API keys](#how-to-generate-api-keys)
 * `BLESKOMAT_SERVER_LIGHTNING` - The Lightning Network backend configuration. Please refer to [Lightning Backend Configuration Options](https://github.com/chill117/lnurl-node#lightning-backend-configuration-options) for details.
 * `BLESKOMAT_SERVER_STORE` - The data store configuration. Please refer to [Configuring Data Store](https://github.com/chill117/lnurl-node#configuring-data-store) for details.
+* `BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER` - The default exchange rates provider
 
 
 ### How to generate API keys
@@ -104,6 +109,19 @@ docker run bleskomat/bleskomat-server ./node_modules/.bin/lnurl generateApiKey
 ```
 
 See [Generating a new API key](https://github.com/chill117/lnurl-node#generating-a-new-api-key) for further details.
+
+
+## Tests
+
+This project includes an automated regression test suite. To run the tests:
+```bash
+npm test
+```
+To provide custom environment variables to the tests, create `test/.env` by copying `test/example.env`:
+```bash
+cp test/example.env test/.env
+```
+See [Configuration Options](#configuration-options).
 
 
 ## Docker Builds

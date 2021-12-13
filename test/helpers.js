@@ -16,9 +16,26 @@
 */
 
 const _ = require('underscore');
+const coinRates = require('coin-rates');
 const { createSignature, generateRandomByteString, prepareQueryPayloadString } = require('lnurl/lib');
 const http = require('http');
+const path = require('path');
 const querystring = require('querystring');
+
+coinRates.providers.push({
+	name: 'dummy',
+	url: 'http://localhost:3000/does-not-exist',
+	parseResponseBody: function(body) {
+		return 1e8;// 1 BTC = 1e8 sats
+	},
+});
+
+if (_.isUndefined(process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER)) {
+	process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER = 'dummy';
+}
+
+// https://github.com/motdotla/dotenv#usage
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 module.exports = {
 

@@ -31,9 +31,6 @@ describe('Server(config)', function() {
 		config.lnurl.auth.apiKeys = [ apiKey ];
 		config.lnurl.store.config.noWarning = true;
 		server = new Server(config);
-		server.getExchangeRate = function() {
-			return Promise.resolve('40000.00');
-		};
 		server.once('listening', done);
 	});
 
@@ -173,8 +170,8 @@ describe('Server(config)', function() {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(200);
 				const json = JSON.parse(body);
-				expect(json.minWithdrawable).to.equal(2500000);
-				expect(json.maxWithdrawable).to.equal(2500000);
+				expect(json.minWithdrawable).to.equal(1000);
+				expect(json.maxWithdrawable).to.equal(1000);
 				expect(json.defaultDescription).to.equal('');
 				expect(json).to.have.property('callback');
 				expect(json).to.have.property('k1');

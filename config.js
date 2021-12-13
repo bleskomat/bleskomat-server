@@ -15,13 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const path = require('path');
-
-// Optionally define environment variables by placing a .env file in the root of the project directory.
-// For details:
-// https://github.com/motdotla/dotenv#usage
-require('dotenv').config();
-
 let config = {
 	lnurl: {
 		host: process.env.BLESKOMAT_SERVER_HOST || '0.0.0.0',
@@ -33,6 +26,11 @@ let config = {
 		},
 		lightning: JSON.parse(process.env.BLESKOMAT_SERVER_LIGHTNING || '{"backend":"dummy","config":{}}'),
 		store: JSON.parse(process.env.BLESKOMAT_SERVER_STORE || '{"backend":"memory","config":{}}'),
+	},
+	coinRates: {
+		defaults: {
+			provider: process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER || 'coinbase',
+		},
 	},
 };
 
