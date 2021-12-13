@@ -17,7 +17,7 @@
 
 const _ = require('underscore');
 const { expect } = require('chai');
-const { generateApiKey, generatePaymentRequest } = require('lnurl/lib');
+const { createHash, generateApiKey, generatePaymentRequest } = require('lnurl/lib');
 const helpers = require('../../helpers');
 const { Server } = require('../../../lib');
 const url = require('url');
@@ -177,22 +177,33 @@ describe('Server(config)', function() {
 				expect(json).to.have.property('k1');
 				expect(json.tag).to.equal('withdrawRequest');
 				const { callback, k1 } = json;
-				const parsedUrl = url.parse(callback);
-				expect(parsedUrl.hostname).to.equal(config.lnurl.host);
-				expect(parsedUrl.port).to.equal(config.lnurl.port.toString());
-				expect(parsedUrl.pathname).to.equal(config.lnurl.endpoint);
-				const pr = generatePaymentRequest(json.minWithdrawable);
-				return helpers.request({
-					method: 'GET',
-					hostname: parsedUrl.hostname,
-					port: parsedUrl.port,
-					path: parsedUrl.pathname,
-					data: { k1, pr },
-				}).then(result2 => {
-					const response2 = result2.response;
-					const body2 = result2.body;
-					expect(response2.statusCode).to.equal(200);
-					expect(body2).to.equal('{"status":"OK"}');
+				const hash = createHash(k1);
+				return server.store.fetch(hash).then(fetchedUrl => {
+					expect(fetchedUrl).to.not.equal(null);
+					expect(fetchedUrl).to.be.an('object');
+					expect(fetchedUrl.remainingUses).to.equal(1);
+					const parsedUrl = url.parse(callback);
+					expect(parsedUrl.hostname).to.equal(config.lnurl.host);
+					expect(parsedUrl.port).to.equal(config.lnurl.port.toString());
+					expect(parsedUrl.pathname).to.equal(config.lnurl.endpoint);
+					const pr = generatePaymentRequest(json.minWithdrawable);
+					return helpers.request({
+						method: 'GET',
+						hostname: parsedUrl.hostname,
+						port: parsedUrl.port,
+						path: parsedUrl.pathname,
+						data: { k1, pr },
+					}).then(result2 => {
+						const response2 = result2.response;
+						const body2 = result2.body;
+						expect(response2.statusCode).to.equal(200);
+						expect(body2).to.equal('{"status":"OK"}');
+						return server.store.fetch(hash).then(fetchedUrl2 => {
+							expect(fetchedUrl2).to.not.equal(null);
+							expect(fetchedUrl2).to.be.an('object');
+							expect(fetchedUrl2.remainingUses).to.equal(0);
+						});
+					});
 				});
 			});
 		});

@@ -137,6 +137,6 @@ jobs:
           BLESKOMAT_SERVER_ENDPOINT: /u
           BLESKOMAT_SERVER_AUTH_API_KEYS: '[]'
           BLESKOMAT_SERVER_LIGHTNING: '{"backend":"dummy","config":{}}'
-          BLESKOMAT_SERVER_STORE: '{"backend":"knex","config":{"client":"sqlite3","connection":{"filename":"./test/tmp/db.sqlite3"},"useNullAsDefault":true}'
+          BLESKOMAT_SERVER_STORE: '{"backend":"knex","config":{"client":"sqlite3","connection":{"filename":"./test.sqlite3"},"useNullAsDefault":true}}'
           BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER: dummy
         run: npm test
