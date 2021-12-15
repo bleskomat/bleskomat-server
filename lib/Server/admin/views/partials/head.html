@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{title}}</title>
+	<link href="/css/all.css?v={{version}}" rel="stylesheet">
+{{> favicon}}
+</head>
+<body class="layout-{{layout}} template-{{template}}{{#if authenticated}} authenticated{{/if}}">
+
+<div id="header">
+	<div class="wrap">
+		<div class="header-title">
+			<a href="/"><img src="/images/bleskomat-server-logo.png" width="1160" height="160" alt></a>
+		</div>
+		<div class="header-sub">The free and <a href="https://github.com/samotari/bleskomat-server">open-source</a> server to self-host and operate Bleskomat hardware devices</div>
+	</div>
+</div>
