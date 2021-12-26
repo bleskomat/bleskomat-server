@@ -151,7 +151,7 @@ For configuring your system to support cross-platform docker builds, see [Buildi
 To build and push docker images:
 ```bash
 docker buildx build --platform linux/arm64,linux/amd64 \
-	--tag bleskomat/bleskomat-server:1.1.0 \
+	--tag bleskomat/bleskomat-server:1.2.0 \
 	--tag bleskomat/bleskomat-server:latest \
 	--output "type=registry" .
 ```

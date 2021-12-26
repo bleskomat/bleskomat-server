@@ -1,6 +1,6 @@
 # Changelog
 
-* TBD:
+* v1.2.0:
 	* New, optional admin interface
 	* More exchange rate providers via coin-rates module
 	* Upgraded dependencies
