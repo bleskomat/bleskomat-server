@@ -9,6 +9,7 @@ An open-source web server that facilitates Lightning Network payments on behalf 
 	* [Usage with Docker](#usage-with-docker)
 	* [Usage with Docker Compose](#usage-with-docker-compose)
 	* [Configuration Options](#configuration-options)
+	* [How to create admin password hash](#how-to-create-admin-password-hash)
 	* [How to generate API keys](#how-to-generate-api-keys)
 * [Tests](#tests)
 * [Docker Builds](#docker-builds)
@@ -97,11 +98,22 @@ Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_STORE` - The data store configuration. Please refer to [Configuring Data Store](https://github.com/chill117/lnurl-node#configuring-data-store) for details.
 * `BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER` - The default exchange rates provider
 * `BLESKOMAT_SERVER_ADMIN_WEB` - Whether or not to enable web-based admin interface. This is disabled by default.
-	* To enable, set eqaul to `1` or `true` - e.g. `BLESKOMAT_SERVER_ADMIN_GUI=1` or `BLESKOMAT_SERVER_ADMIN_GUI=true`
+	* To enable, set eqaul to `1` or `true`
 	* With any other value, the admin interface will be disabled.
 * `BLESKOMAT_SERVER_ADMIN_PASSWORD` - Hashed (bcrypt) password which is used to authenticate user sessions in the web-based admin interface.
 * `BLESKOMAT_SERVER_ADMIN_SESSION` - Stringified JSON object containing configuration options for an instance of the [express-session](https://github.com/expressjs/session#api) middleware.
 * `BLESKOMAT_SERVER_ADMIN_BCRYPT` - Stringified JSON object containing bcrypt-related configuration options.
+	* Example: `{"saltRounds":11}`
+	* See [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) for more details.
+
+
+### How to create admin password hash
+
+A utility script is included with this project which can generate a hash of your admin password. Run it as follows:
+```bash
+npm run generate:adminPasswordHash
+```
+There aren't any restrictions on the length or character set of the password. But a long (20 or more characters), alphanumeric password is recommended.
 
 
 ### How to generate API keys

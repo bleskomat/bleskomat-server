@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "generate:adminPasswordHash": "node ./scripts/generateAdminPasswordHash.js",
     "start": "node ./index.js",
     "test": "npm run test:unit",
     "test:unit": "./node_modules/.bin/mocha --recursive ./test/unit"
