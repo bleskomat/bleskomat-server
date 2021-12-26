@@ -1,0 +1,9 @@
+<div class="pagination">
+	{{#each .}}
+	{{#if current}}
+	<span class="pagination-current">[<b class="pagination-label">{{label}}</b>]</span>
+	{{else}}
+	<a class="pagination-link" href="{{href}}">[<span class="pagination-label">{{label}}</span>]</a>
+	{{/if}}
+	{{/each}}
+</div>

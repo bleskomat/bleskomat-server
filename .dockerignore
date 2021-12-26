@@ -1,5 +1,5 @@
-examples
-node_modules
+.git/
+.github/
+examples/
+node_modules/
 .env
-example.env
-npm-debug.log

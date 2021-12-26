@@ -19,8 +19,6 @@ const _ = require('underscore');
 const coinRates = require('coin-rates');
 const { expect } = require('chai');
 const { createHash, generateApiKey, generatePaymentRequest } = require('lnurl/lib');
-const helpers = require('../../helpers');
-const { Server } = require('../../../lib');
 const url = require('url');
 
 coinRates.providers.push({
@@ -34,104 +32,88 @@ coinRates.providers.push({
 describe('Server(config)', function() {
 
 	let apiKey, apiKeyNonDefault, config, server;
-	before(function(done) {
+	before(function() {
+		config = this.helpers.prepareConfig();
+		config.admin.web = false;
 		apiKey = generateApiKey();
 		apiKeyNonDefault = generateApiKey();
 		apiKeyNonDefault.exchangeRatesProvider = 'nonDefault';
-		config = require('../../../config');
 		config.lnurl.auth.apiKeys = [ apiKey, apiKeyNonDefault ];
-		config.lnurl.store.config.noWarning = true;
-		server = new Server(config);
-		server.once('listening', done);
+		return this.helpers.createServer(config).then(result => {
+			server = result;
+		});
 	});
 
 	after(function() {
 		return server.close({ force: true });
 	});
 
-	it('HTTP GET /status', function() {
-		return helpers.request({
-			method: 'GET',
-			hostname: config.lnurl.host,
-			port: config.lnurl.port,
-			path: '/status',
+	it('GET /status', function() {
+		return this.helpers.request('get', {
+			url: `${config.lnurl.url}/status`,
 		}).then(result => {
 			const { response, body } = result;
 			expect(response.statusCode).to.equal(200);
-			expect(body).to.equal('{"status":"OK"}');
+			expect(body).to.deep.equal({ status: 'OK' });
 		});
 	});
 
-	it('HTTP GET /does-not-exist', function() {
-		return helpers.request({
-			method: 'GET',
-			hostname: config.lnurl.host,
-			port: config.lnurl.port,
-			path: '/does-not-exist',
+	it('GET /does-not-exist', function() {
+		return this.helpers.request('get', {
+			url: `${config.lnurl.url}/does-not-exist`,
 		}).then(result => {
 			const { response, body } = result;
 			expect(response.statusCode).to.equal(404);
-			expect(body).to.equal('{"status":"ERROR","reason":"Not found"}');
+			expect(body).to.deep.equal({ status: 'ERROR', reason: 'Not found' });
 		});
 	});
 
 	describe('HTTP GET /u', function() {
 
 		it('missing secret', function() {
-			return helpers.request({
-				method: 'GET',
-				hostname: config.lnurl.host,
-				port: config.lnurl.port,
-				path: config.lnurl.endpoint,
-				data: {},
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+				qs: {},
 			}).then(result => {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(400);
-				expect(body).to.equal('{"status":"ERROR","reason":"Missing secret"}');
+				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing secret' });
 			});
 		});
 
 		it('missing API key ID', function() {
-			let query = helpers.prepareSignedQuery(apiKey);
+			let query = this.helpers.prepareSignedQuery(apiKey);
 			delete query.id;
-			return helpers.request({
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+				qs: query,
 				method: 'GET',
-				hostname: config.lnurl.host,
-				port: config.lnurl.port,
-				path: config.lnurl.endpoint,
-				data: query,
 			}).then(result => {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(400);
-				expect(body).to.equal('{"status":"ERROR","reason":"Failed API key signature check: Missing \\"id\\""}');
+				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Failed API key signature check: Missing "id"' });
 			});
 		});
 
 		_.each(['channelRequest', 'login', 'payRequest'], tag => {
 			it(`unsupported tag: "${tag}"`, function() {
-				return helpers.request({
-					method: 'GET',
-					hostname: config.lnurl.host,
-					port: config.lnurl.port,
-					path: config.lnurl.endpoint,
-					data: helpers.prepareSignedQuery(apiKey, {
+				return this.helpers.request('get', {
+					url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+					qs: this.helpers.prepareSignedQuery(apiKey, {
 						tag,
 					}),
 				}).then(result => {
 					const { response, body } = result;
 					expect(response.statusCode).to.equal(400);
-					expect(body).to.equal(`{"status":"ERROR","reason":"Unsupported tag: \\"${tag}\\""}`);
+					expect(body).to.deep.equal({ status: 'ERROR', reason: `Unsupported tag: "${tag}"` });
 				});
 			});
 		});
 
 		it('min/maxWithdrawable not equal', function() {
-			return helpers.request({
-				method: 'GET',
-				hostname: config.lnurl.host,
-				port: config.lnurl.port,
-				path: config.lnurl.endpoint,
-				data: helpers.prepareSignedQuery(apiKey, {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+				qs: this.helpers.prepareSignedQuery(apiKey, {
 					tag: 'withdrawRequest',
 					fiatCurrency: 'EUR',
 					minWithdrawable: '1.00',
@@ -141,17 +123,14 @@ describe('Server(config)', function() {
 			}).then(result => {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(400);
-				expect(body).to.equal('{"status":"ERROR","reason":"min/maxWithdrawable must be equal"}');
+				expect(body).to.deep.equal({ status: 'ERROR', reason: 'min/maxWithdrawable must be equal' });
 			});
 		});
 
 		it('missing fiat currency symbol', function() {
-			return helpers.request({
-				method: 'GET',
-				hostname: config.lnurl.host,
-				port: config.lnurl.port,
-				path: config.lnurl.endpoint,
-				data: helpers.prepareSignedQuery(apiKey, {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+				qs: this.helpers.prepareSignedQuery(apiKey, {
 					tag: 'withdrawRequest',
 					minWithdrawable: '1.00',
 					maxWithdrawable: '1.00',
@@ -160,17 +139,14 @@ describe('Server(config)', function() {
 			}).then(result => {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(400);
-				expect(body).to.equal('{"status":"ERROR","reason":"Missing required fiat currency symbol: \\"f\\" or \\"fiatCurrency\\""}');
+				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing required fiat currency symbol: "f" or "fiatCurrency"' });
 			});
 		});
 
 		it('valid, signed lnurl-withdraw request', function() {
-			return helpers.request({
-				method: 'GET',
-				hostname: config.lnurl.host,
-				port: config.lnurl.port,
-				path: config.lnurl.endpoint,
-				data: helpers.prepareSignedQuery(apiKey, {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+				qs: this.helpers.prepareSignedQuery(apiKey, {
 					tag: 'withdrawRequest',
 					fiatCurrency: 'EUR',
 					minWithdrawable: '1.00',
@@ -180,14 +156,13 @@ describe('Server(config)', function() {
 			}).then(result => {
 				const { response, body } = result;
 				expect(response.statusCode).to.equal(200);
-				const json = JSON.parse(body);
-				expect(json.minWithdrawable).to.equal(1000);
-				expect(json.maxWithdrawable).to.equal(1000);
-				expect(json.defaultDescription).to.equal('');
-				expect(json).to.have.property('callback');
-				expect(json).to.have.property('k1');
-				expect(json.tag).to.equal('withdrawRequest');
-				const { callback, k1 } = json;
+				expect(body.minWithdrawable).to.equal(1000);
+				expect(body.maxWithdrawable).to.equal(1000);
+				expect(body.defaultDescription).to.equal('');
+				expect(body).to.have.property('callback');
+				expect(body).to.have.property('k1');
+				expect(body.tag).to.equal('withdrawRequest');
+				const { callback, k1 } = body;
 				const hash = createHash(k1);
 				return server.store.fetch(hash).then(fetchedUrl => {
 					expect(fetchedUrl).to.not.equal(null);
@@ -197,18 +172,15 @@ describe('Server(config)', function() {
 					expect(parsedUrl.hostname).to.equal(config.lnurl.host);
 					expect(parsedUrl.port).to.equal(config.lnurl.port.toString());
 					expect(parsedUrl.pathname).to.equal(config.lnurl.endpoint);
-					const pr = generatePaymentRequest(json.minWithdrawable);
-					return helpers.request({
-						method: 'GET',
-						hostname: parsedUrl.hostname,
-						port: parsedUrl.port,
-						path: parsedUrl.pathname,
-						data: { k1, pr },
+					const pr = generatePaymentRequest(body.minWithdrawable);
+					return this.helpers.request('get', {
+						url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+						qs: { k1, pr },
 					}).then(result2 => {
 						const response2 = result2.response;
 						const body2 = result2.body;
 						expect(response2.statusCode).to.equal(200);
-						expect(body2).to.equal('{"status":"OK"}');
+						expect(body2).to.deep.equal({ status: 'OK' });
 						return server.store.fetch(hash).then(fetchedUrl2 => {
 							expect(fetchedUrl2).to.not.equal(null);
 							expect(fetchedUrl2).to.be.an('object');
@@ -222,12 +194,9 @@ describe('Server(config)', function() {
 		describe('apiKey w/ non-default exchange rates provider', function() {
 
 			it('should use the correct exchange rates provider', function() {
-				return helpers.request({
-					method: 'GET',
-					hostname: config.lnurl.host,
-					port: config.lnurl.port,
-					path: config.lnurl.endpoint,
-					data: helpers.prepareSignedQuery(apiKeyNonDefault, {
+				return this.helpers.request('get', {
+					url: `${config.lnurl.url}${config.lnurl.endpoint}`,
+					qs: this.helpers.prepareSignedQuery(apiKeyNonDefault, {
 						tag: 'withdrawRequest',
 						fiatCurrency: 'EUR',
 						minWithdrawable: '1.00',
@@ -237,11 +206,20 @@ describe('Server(config)', function() {
 				}).then(result => {
 					const { response, body } = result;
 					expect(response.statusCode).to.equal(200);
-					const json = JSON.parse(body);
-					expect(json.minWithdrawable).to.equal(1904000);
-					expect(json.maxWithdrawable).to.equal(1904000);
+					expect(body.minWithdrawable).to.equal(1904000);
+					expect(body.maxWithdrawable).to.equal(1904000);
 				});
 			});
+		});
+	});
+
+	it('GET /admin', function() {
+		return this.helpers.request('get', {
+			url: `${config.lnurl.url}/admin`,
+		}).then(result => {
+			const { response, body } = result;
+			expect(response.statusCode).to.equal(404);
+			expect(body).to.deep.equal({ status: 'ERROR', reason: 'Not found' });
 		});
 	});
 });

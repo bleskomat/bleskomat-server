@@ -15,7 +15,12 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+const _ = require('underscore');
+const path = require('path');
+
 let config = {
+	// Configuration options passed to lnurl-node's createServer function; see:
+	// https://github.com/chill117/lnurl-node#options-for-createserver-method
 	lnurl: {
 		host: process.env.BLESKOMAT_SERVER_HOST || '0.0.0.0',
 		port: parseInt(process.env.BLESKOMAT_SERVER_PORT || 3000),
@@ -31,6 +36,22 @@ let config = {
 		defaults: {
 			provider: process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER || 'coinbase',
 		},
+	},
+	admin: {
+		// Whether or not to enable the web-based admin interface:
+		web: process.env.BLESKOMAT_SERVER_ADMIN_WEB === '1' || process.env.BLESKOMAT_SERVER_ADMIN_WEB === 'true',
+		// The hashed (bcrypt) password to access the admin interface:
+		password: process.env.BLESKOMAT_SERVER_ADMIN_PASSWORD || null,
+		// Configuration options to pass to express-session instance:
+		// https://github.com/expressjs/session#api
+		session: JSON.parse(process.env.BLESKOMAT_SERVER_ADMIN_SESSION || '{"secret":null,"resave":true,"saveUninitialized":false,"cookie":{"httpOnly":true,"expires":false,"path":"/","sameSite":true}}'),
+		bcrypt: JSON.parse(process.env.BLESKOMAT_SERVER_ADMIN_BCRYPT || '{"saltRounds":11}'),
+	},
+	env: {
+		filePath: process.env.BLESKOMAT_SERVER_ENV_FILEPATH && path.resolve(process.env.BLESKOMAT_SERVER_ENV_FILEPATH) || path.join(__dirname, '.env'),
+	},
+	getTlsCertAndFingerprint: {
+		timeout: 5000,
 	},
 };
 

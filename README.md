@@ -96,6 +96,12 @@ Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_LIGHTNING` - The Lightning Network backend configuration. Please refer to [Lightning Backend Configuration Options](https://github.com/chill117/lnurl-node#lightning-backend-configuration-options) for details.
 * `BLESKOMAT_SERVER_STORE` - The data store configuration. Please refer to [Configuring Data Store](https://github.com/chill117/lnurl-node#configuring-data-store) for details.
 * `BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER` - The default exchange rates provider
+* `BLESKOMAT_SERVER_ADMIN_WEB` - Whether or not to enable web-based admin interface. This is disabled by default.
+	* To enable, set eqaul to `1` or `true` - e.g. `BLESKOMAT_SERVER_ADMIN_GUI=1` or `BLESKOMAT_SERVER_ADMIN_GUI=true`
+	* With any other value, the admin interface will be disabled.
+* `BLESKOMAT_SERVER_ADMIN_PASSWORD` - Hashed (bcrypt) password which is used to authenticate user sessions in the web-based admin interface.
+* `BLESKOMAT_SERVER_ADMIN_SESSION` - Stringified JSON object containing configuration options for an instance of the [express-session](https://github.com/expressjs/session#api) middleware.
+* `BLESKOMAT_SERVER_ADMIN_BCRYPT` - Stringified JSON object containing bcrypt-related configuration options.
 
 
 ### How to generate API keys

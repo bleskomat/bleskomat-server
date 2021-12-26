@@ -1,0 +1,31 @@
+<table>
+	<thead>
+		<tr>
+			{{#each headers}}
+				{{#if button}}
+			<th class="has-button">{{label}}</th>
+				{{else}}
+			<th>{{label}}</th>
+				{{/if}}
+			{{/each}}
+		</tr>
+	</thead>
+	<tbody>
+		{{#each data}}
+		<tr>
+			{{#each .}}
+				{{#if button}}
+			<td class="has-button">
+				<a class="button{{#if className}} {{className}}{{/if}}"{{#if href}} href="{{href}}"{{/if}}{{#if title}} title="{{title}}"{{/if}}>{{label}}</a>
+			</td>
+				{{else}}
+			<td>{{value}}</td>
+				{{/if}}
+			{{/each}}
+		</tr>
+		{{/each}}
+	</tbody>
+</table>
+{{#if pagination}}
+{{> pagination pagination}}
+{{/if}}

@@ -1,0 +1,20 @@
+{{> head}}
+
+{{#if showMemoryWarning}}
+<div id="warning">
+	<p><b>WARNING:</b> You are using the in-memory data store. For production environments it is strongly recommended to configure a proper data store.</p>
+	<p>You can can find more details <a href="https://github.com/samotari/bleskomat-server#configuration-options">here</a>.</p>
+</div>
+{{/if}}
+
+{{#if authenticated}}
+{{> nav nav}}
+{{/if}}
+
+<div id="content">
+	<div class="wrap">
+{{{ body }}}
+	</div>
+</div>
+
+{{> foot}}
