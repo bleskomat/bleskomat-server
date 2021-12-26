@@ -43,7 +43,7 @@ npm start
 
 To run the server while printing debug info:
 ```bash
-DEBUG=lnurl* npm start
+DEBUG=bleskomat*,lnurl* npm start
 ```
 
 The server runs with default configurations when none have been provided. To customize your server configuration, create a `.env` file in the root of the project directory. You can start by copying the `example.env` file:
@@ -62,12 +62,12 @@ docker run -p 3000:3000 --name bleskomat-server --detach bleskomat/bleskomat-ser
 
 To run the server while printing debug info:
 ```bash
-docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='lnurl*' bleskomat/bleskomat-server
+docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='bleskomat*,lnurl*' bleskomat/bleskomat-server
 ```
 
 Customize the server configuration by passing environment variables when running the docker container:
 ```bash
-docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='lnurl*' \
+docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='bleskomat*,lnurl*' \
 	-e BLESKOMAT_SERVER_HOST='0.0.0.0' \
 	-e BLESKOMAT_SERVER_PORT='3000' \
 	-e BLESKOMAT_SERVER_URL='https://DOMAINNAME' \
