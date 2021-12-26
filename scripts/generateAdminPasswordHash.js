@@ -15,8 +15,38 @@
 	along with this program.	If not, see <http://www.gnu.org/licenses/>.
 */
 
-const async = require('async');
+const passwordArg = process.argv[2] || null;
+
 const bcrypt = require('bcrypt');
+const path = require('path');
+
+// https://github.com/motdotla/dotenv#usage
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+const config = require('../config');
+
+const done = function(error, output) {
+	if (error) {
+		console.error(error);
+		process.exit(1);
+	}
+	if (output) {
+		process.stdout.write(output);
+	}
+	process.exit();
+};
+
+const doHash = function(password) {
+	return bcrypt.hash(password, config.admin.bcrypt.saltRounds).then(hash => {
+		const output = `\n\n${hash}\n`;
+		done(null, output);
+	}).catch(done);
+};
+
+if (passwordArg) {
+	return doHash(passwordArg);
+}
+
 const readline = require('readline');
 const { Writable } = require('stream');
 
@@ -37,66 +67,15 @@ const rl = readline.createInterface({
 	terminal: true
 });
 
-const done = function(error, result) {
-	rl.close();
-	mutableStdout.muted = false;
-	if (error) {
-		console.error(error);
-		process.exit(1);
-	}
-	if (result) {
-		process.stdout.write(result);
-	}
-	process.exit();
-};
-
-const questions = [
-	{
-		name: 'saltRounds',
-		label: 'Number of bcrypt salt rounds (default = 10)',
-		defaultValue: 10,
-		validate: function(value) {
-			value = parseInt(value);
-			if (!Number.isInteger(value)) {
-				throw new Error('Must be an integer');
-			}
-		},
-		process: function(value) {
-			return parseInt(value);
-		},
-	},
-	{
-		name: 'password',
-		label: 'Please enter the password to be hashed',
-		muted: true,
-	},
-];
-
 console.log('Use CTRL+C to cancel at any time');
 
-let answers = {};
-async.eachSeries(questions, (question, next) => {
-	rl.question(`${question.label}: `, value => {
-		value = value || question.defaultValue;
-		if (question.validate) {
-			try {
-				question.validate(value);
-			} catch (error) {
-				return next(error);
-			}
-		}
-		if (question.process) {
-			value = question.process(value);
-		}
-		answers[question.name] = value;
-		next();
-	});
-	mutableStdout.muted = question.muted === true;
-}, error => {
-	if (error) return done(error);
-	const { password, saltRounds } = answers;
-	return bcrypt.hash(password, saltRounds).then(hash => {
-		const output = `\n\n${hash}\n`;
-		done(null, output);
-	}).catch(done);
+rl.question(`Please enter the password to be hashed: `, password => {
+	rl.close();
+	mutableStdout.muted = false;
+	if (!password) {
+		return done(new Error('An empty-string password is not allowed'));
+	}
+	return doHash(password);
 });
+
+mutableStdout.muted = true;

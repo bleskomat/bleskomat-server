@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/samotari/bleskomat-server",
   "dependencies": {
-    "async": "3.2.2",
     "bcrypt": "5.0.1",
     "bignumber.js": "9.0.2",
     "coin-rates": "1.1.0",

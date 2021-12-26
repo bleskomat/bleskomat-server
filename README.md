@@ -115,7 +115,7 @@ npm run generate:adminPasswordHash
 
 Using the docker image:
 ```bash
-docker run --rm bleskomat/bleskomat-server npm run generate:adminPasswordHash
+docker run --rm bleskomat/bleskomat-server npm run generate:adminPasswordHash -- <PASSWORD>
 ```
 
 There aren't any restrictions on the length or character set of the password. But a long (20 or more characters), alphanumeric password is recommended.
