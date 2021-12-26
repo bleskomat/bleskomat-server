@@ -2,7 +2,7 @@
 # https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 # https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md
 
-FROM node:12-buster-slim AS builder
+FROM node:14-buster-slim AS builder
 
 # Install dependencies needed during the build process:
 RUN apt-get update && \
@@ -27,7 +27,7 @@ USER node
 RUN npm ci --only=production
 
 # Start with a clean image again:
-FROM node:12-buster-slim
+FROM node:14-buster-slim
 
 # Install dependencies needed to run the docker image:
 RUN apt-get update && \
