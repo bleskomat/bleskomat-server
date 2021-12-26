@@ -9,6 +9,7 @@ RUN apt-get update && \
 	apt-get install -yq \
 		python \
 		make \
+		git \
 		g++
 
 # Create app directory:

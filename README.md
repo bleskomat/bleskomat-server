@@ -57,20 +57,19 @@ Please refer to [Configuration Options](#configuration-options) for details abou
 
 To run the server:
 ```bash
-docker run -p 3000:3000 --name bleskomat-server --detach bleskomat/bleskomat-server
+docker run --rm -p 3000:3000 --name bleskomat-server bleskomat/bleskomat-server
 ```
 
 To run the server while printing debug info:
 ```bash
-docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='bleskomat*,lnurl*' bleskomat/bleskomat-server
+docker run --rm -p 3000:3000 --name bleskomat-server -e DEBUG='bleskomat*,lnurl*' bleskomat/bleskomat-server
 ```
 
 Customize the server configuration by passing environment variables when running the docker container:
 ```bash
-docker run -p 3000:3000 --name bleskomat-server --detach -e DEBUG='bleskomat*,lnurl*' \
+docker run --rm -p 3000:3000 --name bleskomat-server -e DEBUG='bleskomat*,lnurl*' \
 	-e BLESKOMAT_SERVER_HOST='0.0.0.0' \
 	-e BLESKOMAT_SERVER_PORT='3000' \
-	-e BLESKOMAT_SERVER_URL='https://DOMAINNAME' \
 	-e BLESKOMAT_SERVER_ENDPOINT='/u' \
 	-e BLESKOMAT_SERVER_AUTH_API_KEYS='[]' \
 	-e BLESKOMAT_SERVER_LIGHTNING='{"backend":"dummy","config":{}}' \
@@ -113,6 +112,12 @@ A utility script is included with this project which can generate a hash of your
 ```bash
 npm run generate:adminPasswordHash
 ```
+
+Using the docker image:
+```bash
+docker run --rm bleskomat/bleskomat-server npm run generate:adminPasswordHash
+```
+
 There aren't any restrictions on the length or character set of the password. But a long (20 or more characters), alphanumeric password is recommended.
 
 
@@ -125,7 +130,7 @@ Using nodejs:
 
 Using the docker image:
 ```bash
-docker run bleskomat/bleskomat-server ./node_modules/.bin/lnurl generateApiKey
+docker run --rm bleskomat/bleskomat-server ./node_modules/.bin/lnurl generateApiKey
 ```
 
 See [Generating a new API key](https://github.com/chill117/lnurl-node#generating-a-new-api-key) for further details.
