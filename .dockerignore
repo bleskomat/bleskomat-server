@@ -2,4 +2,5 @@
 .github/
 examples/
 node_modules/
+test/
 .env
