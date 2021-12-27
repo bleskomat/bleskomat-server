@@ -99,11 +99,9 @@ Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_ADMIN_WEB` - Whether or not to enable web-based admin interface. This is disabled by default.
 	* To enable, set equal to `1` or `true`
 	* With any other value, the admin interface will be disabled.
-* `BLESKOMAT_SERVER_ADMIN_PASSWORD` - Hashed (bcrypt) password which is used to authenticate user sessions in the web-based admin interface.
+* `BLESKOMAT_SERVER_ADMIN_PASSWORD` - Hashed password which is used to authenticate user sessions in the web-based admin interface.
 * `BLESKOMAT_SERVER_ADMIN_SESSION` - Stringified JSON object containing configuration options for an instance of the [express-session](https://github.com/expressjs/session#api) middleware.
-* `BLESKOMAT_SERVER_ADMIN_BCRYPT` - Stringified JSON object containing bcrypt-related configuration options.
-	* Example: `{"saltRounds":11}`
-	* See [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) for more details.
+* `BLESKOMAT_SERVER_ADMIN_SCRYPT` - Stringified JSON object containing configuration options for [crypto.scrypt](https://nodejs.org/docs/latest-v12.x/api/crypto.html#crypto_crypto_scrypt_password_salt_keylen_options_callback).
 
 
 ### How to create admin password hash

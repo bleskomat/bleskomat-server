@@ -16,7 +16,6 @@
 */
 
 const _ = require('underscore');
-const bcrypt = require('bcrypt');
 const cheerio = require('cheerio');
 const { expect } = require('chai');
 
@@ -100,7 +99,8 @@ describe('admin', function() {
 				expect(response.statusCode).to.equal(302);
 				expect(body).to.equal('Found. Redirecting to /admin');
 				return this.helpers.readEnv(config.env.filePath).then(env => {
-					return bcrypt.compare(validFormData.password, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
+					const { scrypt } = server.app.custom.lib;
+					return scrypt.compare(validFormData.password, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
 						expect(correct).to.equal(true);
 					});
 				});

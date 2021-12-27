@@ -26,7 +26,7 @@ describe('admin', function() {
 	before(function() {
 		config = this.helpers.prepareConfig();
 		config.admin.web = true;
-		config.admin.password = '$2b$11$BHVCR4LkawC1m37d4MHiEelGqSgEW9ptQvJwYWEXNaSfDap1jt/vy';// test
+		config.admin.password = '2904be08aa871adedb4be91160f4d4a10cb36321;32;16;bceb4bd3444c2be5e3e544891118d5150cc2385232d1787097467aa60993cdd0';// test
 		return this.helpers.createServer(config).then(result => {
 			server = result;
 		});

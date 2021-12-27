@@ -17,7 +17,7 @@
 
 const passwordArg = process.argv[2] || null;
 
-const bcrypt = require('bcrypt');
+const scrypt = require('../lib/Server/admin/lib/scrypt');
 const path = require('path');
 
 // https://github.com/motdotla/dotenv#usage
@@ -37,7 +37,9 @@ const done = function(error, output) {
 };
 
 const doHash = function(password) {
-	return bcrypt.hash(password, config.admin.bcrypt.saltRounds).then(hash => {
+	const { keylen, options, saltBytes } = config.admin.scrypt;
+	const salt = scrypt.generateSalt(saltBytes);
+	return scrypt.hash(password, salt, keylen, options).then(hash => {
 		const output = `\n\n${hash}\n`;
 		done(null, output);
 	}).catch(done);

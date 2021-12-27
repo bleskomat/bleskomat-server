@@ -16,7 +16,6 @@
 */
 
 const _ = require('underscore');
-const bcrypt = require('bcrypt');
 const cheerio = require('cheerio');
 const coinRates = require('coin-rates');
 const { expect } = require('chai');
@@ -27,7 +26,7 @@ describe('admin', function() {
 	before(function() {
 		config = this.helpers.prepareConfig();
 		config.admin.web = true;
-		config.admin.password = '$2b$11$BHVCR4LkawC1m37d4MHiEelGqSgEW9ptQvJwYWEXNaSfDap1jt/vy';// test
+		config.admin.password = '2904be08aa871adedb4be91160f4d4a10cb36321;32;16;bceb4bd3444c2be5e3e544891118d5150cc2385232d1787097467aa60993cdd0';// test
 		return this.helpers.createServer(config).then(result => {
 			server = result;
 		});
@@ -235,7 +234,8 @@ describe('admin', function() {
 					const $ = cheerio.load(body);
 					expect($('.form-success').text()).to.contain('Settings were saved successfully.');
 					return this.helpers.readEnv(config.env.filePath).then(env => {
-						return bcrypt.compare(validFormData.newPassword, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
+						const { scrypt } = server.app.custom.lib;
+						return scrypt.compare(validFormData.newPassword, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
 							expect(correct).to.equal(true);
 						});
 					});
