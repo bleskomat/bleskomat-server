@@ -41,5 +41,19 @@ describe('admin', function() {
 				expect(error.message).to.equal('A password is required to use the admin interface with a configured Lightning backend');
 			});
 		});
+
+		it('with plaintext password', function() {
+			let config = this.helpers.prepareConfig();
+			config.admin.web = true;
+			config.admin.password = '';
+			config.lnurl.lightning.backend = 'coinos';
+			config.lnurl.lightning.config = { jwt: 'xxx' };
+			return this.helpers.createServer(config).then(result => {
+				server = result;
+				throw new Error('Expected an error');
+			}).catch(error => {
+				expect(error.message).to.equal('A password is required to use the admin interface with a configured Lightning backend');
+			});
+		});
 	});
 });
