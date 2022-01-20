@@ -16,6 +16,7 @@
 */
 
 const { expect } = require('chai');
+const scrypt = require('../../../../../lib/Server/admin/lib/scrypt');
 
 describe('admin', function() {
 
@@ -44,15 +45,19 @@ describe('admin', function() {
 
 		it('with plaintext password', function() {
 			let config = this.helpers.prepareConfig();
+			const secret = 'test';
 			config.admin.web = true;
-			config.admin.password = '';
-			config.lnurl.lightning.backend = 'coinos';
-			config.lnurl.lightning.config = { jwt: 'xxx' };
+			config.admin.password = null;
+			config.admin.passwordPlaintext = secret;
 			return this.helpers.createServer(config).then(result => {
 				server = result;
-				throw new Error('Expected an error');
-			}).catch(error => {
-				expect(error.message).to.equal('A password is required to use the admin interface with a configured Lightning backend');
+				const hash = server.app.custom.config.admin.password;
+				expect(hash).to.be.a('string');
+				expect(hash).to.not.equal('');
+				expect(server.app.custom.config.admin.passwordPlaintext).to.equal(null);
+				return scrypt.compare(secret, hash).then(correct => {
+					expect(correct).to.equal(true);
+				});
 			});
 		});
 	});

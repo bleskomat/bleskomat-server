@@ -42,6 +42,8 @@ let config = {
 		web: process.env.BLESKOMAT_SERVER_ADMIN_WEB === '1' || process.env.BLESKOMAT_SERVER_ADMIN_WEB === 'true',
 		// The hashed password to access the admin interface:
 		password: process.env.BLESKOMAT_SERVER_ADMIN_PASSWORD || null,
+		// Plaintext password:
+		passwordPlaintext: process.env.BLESKOMAT_SERVER_ADMIN_PASSWORD_PLAINTEXT || null,
 		// Configuration options to pass to express-session instance:
 		// https://github.com/expressjs/session#api
 		session: JSON.parse(process.env.BLESKOMAT_SERVER_ADMIN_SESSION || '{"secret":null,"resave":true,"saveUninitialized":false,"cookie":{"httpOnly":true,"expires":false,"path":"/","sameSite":true}}'),
