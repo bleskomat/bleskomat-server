@@ -1,5 +1,8 @@
 # Changelog
 
+* TBD:
+	* Added support for LN backends with custom endpoint and/or behind TOR hidden service
+	* Improved error-handling for LN backend checks
 * v1.2.0:
 	* New, optional admin interface
 	* More exchange rate providers via coin-rates module

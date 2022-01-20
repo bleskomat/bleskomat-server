@@ -47,6 +47,8 @@ let config = {
 		session: JSON.parse(process.env.BLESKOMAT_SERVER_ADMIN_SESSION || '{"secret":null,"resave":true,"saveUninitialized":false,"cookie":{"httpOnly":true,"expires":false,"path":"/","sameSite":true}}'),
 		scrypt: JSON.parse(process.env.BLESKOMAT_SERVER_ADMIN_SCRYPT || '{"keylen":32,"saltBytes":20,"options":{"cost":16384}}'),
 	},
+	// The hostname of the TOR socks proxy.
+	// Used when connecting to an LN backend behind TOR hidden service.
 	torSocksProxy: process.env.BLESKOMAT_SERVER_TORSOCKSPROXY || '127.0.0.1:9050',
 	env: {
 		filePath: process.env.BLESKOMAT_SERVER_ENV_FILEPATH && path.resolve(process.env.BLESKOMAT_SERVER_ENV_FILEPATH) || path.join(__dirname, '.env'),
