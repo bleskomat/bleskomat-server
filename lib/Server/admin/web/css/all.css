@@ -725,6 +725,16 @@ body.template-settings #form-settings-lightning .form-group--backend,
 body.template-settings #form-settings-lightning .form-group.visible {
 	display: block;
 }
+body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-cert,
+body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-fingerprint,
+body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-fingerprint256 {
+	display: none;
+}
+body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-cert,
+body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-fingerprint,
+body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-fingerprint256 {
+	display: inline-block;
+}
 /* TEMPLATES */
 
 /* RESPONSIVE */

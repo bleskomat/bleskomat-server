@@ -119,7 +119,7 @@ describe('admin', function() {
 				const $ = cheerio.load(body);
 				expect($('.form-title').text()).to.contain('Lightning Configuration');
 				expect($('form select[name=backend]')).to.have.length(1);
-				expect($('form input[name="lnd[hostname]"]')).to.have.length(1);
+				expect($('form input[name="lnd[baseUrl]"]')).to.have.length(1);
 				expect($('form textarea[name="lnd[cert]"]')).to.have.length(1);
 				expect($('form textarea[name="lnd[macaroon]"]')).to.have.length(1);
 			});

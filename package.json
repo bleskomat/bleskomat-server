@@ -42,8 +42,8 @@
     "express": "4.17.2",
     "express-handlebars": "6.0.2",
     "express-session": "1.17.2",
-    "form": "github:samotari/form-node#v1.2.1",
-    "lnurl": "0.19.1",
+    "form": "github:samotari/form-node#v1.2.2",
+    "lnurl": "0.20.0",
     "open-sans-fontface": "github:samotari/open-sans",
     "underscore": "1.13.2"
   },
