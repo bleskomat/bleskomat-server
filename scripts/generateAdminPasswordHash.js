@@ -40,8 +40,7 @@ const doHash = function(password) {
 	const { keylen, options, saltBytes } = config.admin.scrypt;
 	const salt = scrypt.generateSalt(saltBytes);
 	return scrypt.hash(password, salt, keylen, options).then(hash => {
-		const output = `\n\n${hash}\n`;
-		done(null, output);
+		done(null, hash);
 	}).catch(done);
 };
 
