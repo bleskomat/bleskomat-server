@@ -1,6 +1,6 @@
 # Changelog
 
-* TBD:
+* v1.3.0:
 	* Can now provide password for admin interface as hash or plaintext via environment variable
 	* Added support for LN backends with custom endpoint and/or behind TOR hidden service
 	* Improved error-handling for LN backend checks
