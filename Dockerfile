@@ -33,13 +33,17 @@ FROM node:12-buster-slim
 # Install dependencies needed to run the docker image:
 RUN apt-get update && \
 	apt-get install -yq \
-		jq
+		jq \
+		git
 
 # Create app directory:
 WORKDIR /usr/src/app
 
 # Copy app files:
 COPY --from=builder /usr/src/app .
+
+# Create data directory:
+RUN mkdir -p /usr/src/app/data
 
 # Set node user as the owner of the app directory:
 RUN chown -R node:node /usr/src/app
@@ -51,4 +55,4 @@ USER node
 ENTRYPOINT [ "/usr/src/app/docker-entrypoint.sh" ]
 
 # Default command to be executed when image is run:
-CMD [ "node", "index.js" ]
+CMD [ "npm", "start" ]

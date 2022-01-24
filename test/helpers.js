@@ -41,7 +41,10 @@ if (_.isUndefined(process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER)) {
 }
 
 // https://github.com/motdotla/dotenv#usage
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config({
+	override: true,
+	path: path.join(__dirname, '.env'),
+});
 
 module.exports = {
 

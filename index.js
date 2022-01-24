@@ -15,8 +15,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+const path = require('path');
+const envFilePath = path.resolve(process.env.BLESKOMAT_SERVER_ENV_FILEPATH || '.env');
+
 // https://github.com/motdotla/dotenv#usage
-require('dotenv').config();
+require('dotenv').config({
+	override: true,
+	path: envFilePath,
+});
 
 const config = require('./config');
 let server = require('./lib/Server')(config);

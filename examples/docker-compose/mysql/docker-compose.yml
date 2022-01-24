@@ -18,7 +18,7 @@ services:
       - MYSQL_PASSWORD=XXX
 
   web:
-    image: bleskomat/bleskomat-server
+    image: bleskomat/bleskomat-server:latest
     container_name: bleskomat-server-web
     restart: always
     init: true
@@ -26,6 +26,8 @@ services:
       - 127.0.0.1:3000:3000
     networks:
       - backend
+    volumes:
+      - web_datadir:/usr/src/app/data
     environment:
       - DEBUG=bleskomat*,lnurl*
       - BLESKOMAT_SERVER_HOST=0.0.0.0
@@ -35,9 +37,11 @@ services:
       - BLESKOMAT_SERVER_AUTH_API_KEYS=[]
       - BLESKOMAT_SERVER_LIGHTNING={"backend":"dummy","config":{}}
       - BLESKOMAT_SERVER_STORE={"backend":"knex","config":{"client":"mysql","connection":{"host":"127.0.0.1","user":"bleskomat_server","password":"XXX","database":"bleskomat_server"}}}
+      - BLESKOMAT_SERVER_ENV_FILEPATH=./data/.env
 
 volumes:
   db_datadir:
+  web_datadir:
 
 networks:
   backend:

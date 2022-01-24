@@ -53,7 +53,7 @@ let config = {
 	// Used when connecting to an LN backend behind TOR hidden service.
 	torSocksProxy: process.env.BLESKOMAT_SERVER_TORSOCKSPROXY || '127.0.0.1:9050',
 	env: {
-		filePath: process.env.BLESKOMAT_SERVER_ENV_FILEPATH && path.resolve(process.env.BLESKOMAT_SERVER_ENV_FILEPATH) || path.join(__dirname, '.env'),
+		filePath: process.env.BLESKOMAT_SERVER_ENV_FILEPATH || path.join(__dirname, '.env'),
 	},
 	getTlsCertAndFingerprint: {
 		timeout: 5000,
