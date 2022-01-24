@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.3.2:
+	* Fixes for run via docker - e.g. w/ data store and custom .env file path
 * v1.3.1:
 	* Fix for lnd backend check
 * v1.3.0:
