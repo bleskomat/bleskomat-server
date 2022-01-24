@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   web:
-    image: bleskomat/bleskomat-server:fix
+    image: bleskomat/bleskomat-server:latest
     container_name: bleskomat-server-web
     restart: always
     init: true
