@@ -1,5 +1,9 @@
 # Changelog
 
+* v1.3.3:
+	* Build docker image w/ default data store dependencies (knex, pg)
+	* Optimize Dockerfile
+	* Remove docker entrypoint file which was used to install data store deps at run-time - this is no longer done.
 * v1.3.2:
 	* Fixes for run via docker - e.g. w/ data store and custom .env file path
 * v1.3.1:
