@@ -16,7 +16,7 @@ services:
       - POSTGRES_PASSWORD=XXX
 
   web:
-    image: bleskomat/bleskomat-server:latest
+    image: bleskomat/bleskomat-server:1.3.4
     container_name: bleskomat-server-web
     restart: always
     depends_on:

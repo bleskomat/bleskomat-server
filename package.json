@@ -43,7 +43,7 @@
     "express-handlebars": "6.0.2",
     "express-session": "1.17.2",
     "form": "https://github.com/samotari/form-node/archive/refs/tags/v1.2.2.tar.gz",
-    "lnurl": "https://github.com/chill117/lnurl-node/archive/refs/tags/v0.20.1.tar.gz",
+    "lnurl": "0.20.2",
     "open-sans-fontface": "https://github.com/samotari/open-sans/archive/refs/tags/1.4.2.tar.gz",
     "underscore": "1.13.2"
   },

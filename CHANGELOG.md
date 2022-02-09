@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.3.4:
+	* Date store of lnurl-node will now wait for database connection or fail after timeout (30 seconds by default)
 * v1.3.3:
 	* Build docker image w/ default data store dependencies (knex, pg)
 	* Optimize Dockerfile
