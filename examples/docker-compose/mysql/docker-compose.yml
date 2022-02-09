@@ -6,8 +6,6 @@ services:
     image: mysql:5.7
     container_name: bleskomat-server-db
     restart: always
-    expose:
-      - 3306
     volumes:
       - db_datadir:/var/lib/mysql
     networks:
@@ -21,9 +19,10 @@ services:
     image: bleskomat/bleskomat-server:latest
     container_name: bleskomat-server-web
     restart: always
-    init: true
+    depends_on:
+      - db
     ports:
-      - 127.0.0.1:3000:3000
+      - "127.0.0.1:3000:3000"
     networks:
       - backend
     volumes:

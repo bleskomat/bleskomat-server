@@ -6,7 +6,6 @@ services:
     image: bleskomat/bleskomat-server:latest
     container_name: bleskomat-server-web
     restart: always
-    init: true
     ports:
       - "127.0.0.1:3000:3000"
     volumes:

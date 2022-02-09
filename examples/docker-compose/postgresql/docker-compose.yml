@@ -6,8 +6,6 @@ services:
     image: postgres:10
     container_name: bleskomat-server-db
     restart: always
-    expose:
-      - 5432
     networks:
       - backend
     volumes:
@@ -21,7 +19,8 @@ services:
     image: bleskomat/bleskomat-server:latest
     container_name: bleskomat-server-web
     restart: always
-    init: true
+    depends_on:
+      - db
     ports:
       - "127.0.0.1:3000:3000"
     networks:
