@@ -58,6 +58,9 @@ let config = {
 	getTlsCertAndFingerprint: {
 		timeout: 5000,
 	},
+	lnurlpos: {
+		enabled: _.isUndefined(process.env.BLESKOMAT_LNURLPOS_ENABLED) || process.env.BLESKOMAT_LNURLPOS_ENABLED === 'true',
+	},
 };
 
 if (!config.lnurl.url) {

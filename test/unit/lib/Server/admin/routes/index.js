@@ -58,7 +58,7 @@ describe('admin', function() {
 			});
 		});
 
-		_.each(['/', '/admin'], uri => {
+		_.each(['/admin'], uri => {
 			it(`GET ${uri}`, function() {
 			return this.helpers.request('get', {
 				url: `${config.lnurl.url}${uri}`,
@@ -109,7 +109,7 @@ describe('admin', function() {
 			});
 		});
 
-		_.each(['/', '/admin'], uri => {
+		_.each(['/admin'], uri => {
 			it(`GET ${uri}`, function() {
 				return this.helpers.request('get', {
 					url: `${config.lnurl.url}${uri}`,
