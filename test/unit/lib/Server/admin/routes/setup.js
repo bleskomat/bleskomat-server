@@ -16,8 +16,8 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const cheerio = require('cheerio');
-const { expect } = require('chai');
 
 describe('admin', function() {
 
@@ -42,12 +42,12 @@ describe('admin', function() {
 			url: `${config.lnurl.url}/admin/setup`,
 		}).then(result => {
 			const { response, body } = result;
-			expect(response.statusCode).to.equal(200);
+			assert.strictEqual(response.statusCode, 200);
 			const $ = cheerio.load(body);
-			expect($('h1').text()).to.contain('Admin Interface Setup');
-			expect($('.form-group--login .form-group-instructions').text()).to.contain('Set an administrator password');
-			expect($('form input[name=password]')).to.have.length(1);
-			expect($('form input[name=verifyPassword]')).to.have.length(1);
+			assert.match($('h1').text(), /Admin Interface Setup/);
+			assert.match($('.form-group--login .form-group-instructions').text(), /Set an administrator password/);
+			assert.strictEqual($('form input[name=password]').length, 1);
+			assert.strictEqual($('form input[name=verifyPassword]').length, 1);
 		});
 	});
 
@@ -68,9 +68,9 @@ describe('admin', function() {
 					form: _.omit(validFormData, key),
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
+					assert.strictEqual(response.statusCode, 400);
 					const $ = cheerio.load(body);
-					expect($('.form-errors').text()).to.contain(`"${label}" is required`);
+					assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
 				});
 			});
 		});
@@ -84,9 +84,9 @@ describe('admin', function() {
 				},
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
+				assert.strictEqual(response.statusCode, 400);
 				const $ = cheerio.load(body);
-				expect($('.form-errors').text()).to.contain('"Verify Password" must match "Password"');
+				assert.match($('.form-errors').text(), /"Verify Password" must match "Password"/);
 			});
 		});
 
@@ -96,12 +96,12 @@ describe('admin', function() {
 				form: validFormData,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin');
 				return this.helpers.readEnv(config.env.filePath).then(env => {
 					const { scrypt } = server.app.custom.lib;
 					return scrypt.compare(validFormData.password, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
-						expect(correct).to.equal(true);
+						assert.strictEqual(correct, true);
 					});
 				});
 			});

@@ -48,7 +48,6 @@
     "underscore": "1.13.2"
   },
   "devDependencies": {
-    "chai": "4.3.4",
     "cheerio": "1.0.0-rc.10",
     "mocha": "9.2.0",
     "pem": "1.14.5"

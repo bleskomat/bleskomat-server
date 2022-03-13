@@ -16,8 +16,8 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const cheerio = require('cheerio');
-const { expect } = require('chai');
 const { generateApiKey } = require('lnurl');
 
 describe('admin', function() {
@@ -47,8 +47,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});
@@ -64,7 +64,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -84,13 +84,13 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('h1').text()).to.contain('Overview');
-				expect($('.box.lnurls')).to.have.length(1);
-				expect($('.box.apiKeys')).to.have.length(1);
-				expect($('.box.apiKeys table tbody tr')).to.have.length(config.lnurl.auth.apiKeys.length);
-				expect($('.box.apiKeys table tbody tr:nth-child(1) td:first-child').text().trim()).to.contain(config.lnurl.auth.apiKeys[0].id);
+				assert.match($('h1').text(), /Overview/);
+				assert.strictEqual($('.box.lnurls').length, 1);
+				assert.strictEqual($('.box.apiKeys').length, 1);
+				assert.strictEqual($('.box.apiKeys table tbody tr').length, config.lnurl.auth.apiKeys.length);
+				assert.match($('.box.apiKeys table tbody tr:nth-child(1) td:first-child').text().trim(), new RegExp(config.lnurl.auth.apiKeys[0].id));
 			});
 		});
 	});

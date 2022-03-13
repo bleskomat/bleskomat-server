@@ -16,8 +16,8 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const coinRates = require('coin-rates');
-const { expect } = require('chai');
 const { createHash, generateApiKey, generatePaymentRequest } = require('lnurl/lib');
 const url = require('url');
 
@@ -53,8 +53,8 @@ describe('Server(config)', function() {
 			url: `${config.lnurl.url}/status`,
 		}).then(result => {
 			const { response, body } = result;
-			expect(response.statusCode).to.equal(200);
-			expect(body).to.deep.equal({ status: 'OK' });
+			assert.strictEqual(response.statusCode, 200);
+			assert.deepStrictEqual(body, { status: 'OK' });
 		});
 	});
 
@@ -63,8 +63,8 @@ describe('Server(config)', function() {
 			url: `${config.lnurl.url}/does-not-exist`,
 		}).then(result => {
 			const { response, body } = result;
-			expect(response.statusCode).to.equal(404);
-			expect(body).to.deep.equal({ status: 'ERROR', reason: 'Not found' });
+			assert.strictEqual(response.statusCode, 404);
+			assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Not found' });
 		});
 	});
 
@@ -76,8 +76,8 @@ describe('Server(config)', function() {
 				qs: {},
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing secret' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Missing secret' });
 			});
 		});
 
@@ -90,8 +90,8 @@ describe('Server(config)', function() {
 				method: 'GET',
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Failed API key signature check: Missing "id"' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Failed API key signature check: Missing "id"' });
 			});
 		});
 
@@ -104,8 +104,8 @@ describe('Server(config)', function() {
 					}),
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
-					expect(body).to.deep.equal({ status: 'ERROR', reason: `Unsupported tag: "${tag}"` });
+					assert.strictEqual(response.statusCode, 400);
+					assert.deepStrictEqual(body, { status: 'ERROR', reason: `Unsupported tag: "${tag}"` });
 				});
 			});
 		});
@@ -122,8 +122,8 @@ describe('Server(config)', function() {
 				}),
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'min/maxWithdrawable must be equal' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'min/maxWithdrawable must be equal' });
 			});
 		});
 
@@ -138,8 +138,8 @@ describe('Server(config)', function() {
 				}),
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing required fiat currency symbol: "f" or "fiatCurrency"' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Missing required fiat currency symbol: "f" or "fiatCurrency"' });
 			});
 		});
 
@@ -155,23 +155,23 @@ describe('Server(config)', function() {
 				}),
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
-				expect(body.minWithdrawable).to.equal(1000);
-				expect(body.maxWithdrawable).to.equal(1000);
-				expect(body.defaultDescription).to.equal('');
-				expect(body).to.have.property('callback');
-				expect(body).to.have.property('k1');
-				expect(body.tag).to.equal('withdrawRequest');
+				assert.strictEqual(response.statusCode, 200);
+				assert.strictEqual(body.minWithdrawable, 1000);
+				assert.strictEqual(body.maxWithdrawable, 1000);
+				assert.strictEqual(body.defaultDescription, '');
+				assert.ok(body.callback);
+				assert.ok(body.k1);
+				assert.strictEqual(body.tag, 'withdrawRequest');
 				const { callback, k1 } = body;
 				const hash = createHash(k1);
 				return server.store.fetch(hash).then(fetchedUrl => {
-					expect(fetchedUrl).to.not.equal(null);
-					expect(fetchedUrl).to.be.an('object');
-					expect(fetchedUrl.remainingUses).to.equal(1);
+					assert.notStrictEqual(fetchedUrl, null);
+					assert.strictEqual(typeof fetchedUrl, 'object');
+					assert.strictEqual(fetchedUrl.remainingUses, 1);
 					const parsedUrl = url.parse(callback);
-					expect(parsedUrl.hostname).to.equal(config.lnurl.host);
-					expect(parsedUrl.port).to.equal(config.lnurl.port.toString());
-					expect(parsedUrl.pathname).to.equal(config.lnurl.endpoint);
+					assert.strictEqual(parsedUrl.hostname, config.lnurl.host);
+					assert.strictEqual(parsedUrl.port, config.lnurl.port.toString());
+					assert.strictEqual(parsedUrl.pathname, config.lnurl.endpoint);
 					const pr = generatePaymentRequest(body.minWithdrawable);
 					return this.helpers.request('get', {
 						url: `${config.lnurl.url}${config.lnurl.endpoint}`,
@@ -179,12 +179,12 @@ describe('Server(config)', function() {
 					}).then(result2 => {
 						const response2 = result2.response;
 						const body2 = result2.body;
-						expect(response2.statusCode).to.equal(200);
-						expect(body2).to.deep.equal({ status: 'OK' });
+						assert.strictEqual(response2.statusCode, 200);
+						assert.deepStrictEqual(body2, { status: 'OK' });
 						return server.store.fetch(hash).then(fetchedUrl2 => {
-							expect(fetchedUrl2).to.not.equal(null);
-							expect(fetchedUrl2).to.be.an('object');
-							expect(fetchedUrl2.remainingUses).to.equal(0);
+							assert.notStrictEqual(fetchedUrl2, null);
+							assert.strictEqual(typeof fetchedUrl2, 'object');
+							assert.strictEqual(fetchedUrl2.remainingUses, 0);
 						});
 					});
 				});
@@ -205,9 +205,9 @@ describe('Server(config)', function() {
 					}),
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(200);
-					expect(body.minWithdrawable).to.equal(1904000);
-					expect(body.maxWithdrawable).to.equal(1904000);
+					assert.strictEqual(response.statusCode, 200);
+					assert.strictEqual(body.minWithdrawable, 1904000);
+					assert.strictEqual(body.maxWithdrawable, 1904000);
 				});
 			});
 		});
@@ -218,8 +218,8 @@ describe('Server(config)', function() {
 			url: `${config.lnurl.url}/admin`,
 		}).then(result => {
 			const { response, body } = result;
-			expect(response.statusCode).to.equal(404);
-			expect(body).to.deep.equal({ status: 'ERROR', reason: 'Not found' });
+			assert.strictEqual(response.statusCode, 404);
+			assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Not found' });
 		});
 	});
 });

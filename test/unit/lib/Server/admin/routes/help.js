@@ -16,8 +16,8 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const cheerio = require('cheerio');
-const { expect } = require('chai');
 
 describe('admin', function() {
 
@@ -46,8 +46,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});
@@ -63,7 +63,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -73,10 +73,10 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('h1').text()).to.contain('Help');
-				expect($('#content h1 + p').text()).to.contain('Need some help? Join us in the official');
+				assert.match($('h1').text(), /Help/);
+				assert.match($('#content h1 + p').text(), /Need some help\? Join us in the official/);
 			});
 		});
 	});

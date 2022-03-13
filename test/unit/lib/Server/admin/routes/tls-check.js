@@ -16,7 +16,7 @@
 */
 
 const _ = require('underscore');
-const { expect } = require('chai');
+const assert = require('assert');
 
 describe('admin', function() {
 
@@ -56,8 +56,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});
@@ -73,7 +73,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -86,8 +86,8 @@ describe('admin', function() {
 					qs: {},
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
-					expect(body).to.deep.equal({ status: 400, error: 'Missing "hostname"' });
+					assert.strictEqual(response.statusCode, 400);
+					assert.deepStrictEqual(body, { status: 400, error: 'Missing "hostname"' });
 				});
 			});
 
@@ -98,8 +98,8 @@ describe('admin', function() {
 					qs: { hostname: '\/"invalid-hostname' },
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
-					expect(body).to.deep.equal({ status: 400, error: 'Unable to parse hostname' });
+					assert.strictEqual(response.statusCode, 400);
+					assert.deepStrictEqual(body, { status: 400, error: 'Unable to parse hostname' });
 				});
 			});
 
@@ -110,8 +110,8 @@ describe('admin', function() {
 					qs: { hostname: '127.0.0.2:3001' },
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
-					expect(body).to.deep.equal({ status: 400, error: 'Connection failure' });
+					assert.strictEqual(response.statusCode, 400);
+					assert.deepStrictEqual(body, { status: 400, error: 'Connection failure' });
 				});
 			});
 
@@ -122,12 +122,12 @@ describe('admin', function() {
 					qs: { hostname: httpsServer.hostname },
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(200);
-					expect(body).to.be.an('object');
-					expect(body.authorized).to.equal(false);
-					expect(body.fingerprint).to.be.a('string');
-					expect(body.fingerprint256).to.be.a('string');
-					expect(body.pem).to.be.a('string');
+					assert.strictEqual(response.statusCode, 200);
+					assert.strictEqual(typeof body, 'object');
+					assert.strictEqual(body.authorized, false);
+					assert.strictEqual(typeof body.fingerprint, 'string');
+					assert.strictEqual(typeof body.fingerprint256, 'string');
+					assert.strictEqual(typeof body.pem, 'string');
 				});
 			});
 		});

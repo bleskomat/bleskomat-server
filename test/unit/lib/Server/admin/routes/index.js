@@ -16,7 +16,7 @@
 */
 
 const _ = require('underscore');
-const { expect } = require('chai');
+const assert = require('assert');
 
 describe('admin', function() {
 
@@ -43,8 +43,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/status`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
-				expect(body).to.deep.equal({ status: 'OK' });
+				assert.strictEqual(response.statusCode, 200);
+				assert.deepStrictEqual(body, { status: 'OK' });
 			});
 		});
 
@@ -53,8 +53,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/u`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing secret' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Missing secret' });
 			});
 		});
 
@@ -64,8 +64,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/setup');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/setup');
 				});
 			});
 		});
@@ -94,8 +94,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/status`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
-				expect(body).to.deep.equal({ status: 'OK' });
+				assert.strictEqual(response.statusCode, 200);
+				assert.deepStrictEqual(body, { status: 'OK' });
 			});
 		});
 
@@ -104,8 +104,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/u`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(400);
-				expect(body).to.deep.equal({ status: 'ERROR', reason: 'Missing secret' });
+				assert.strictEqual(response.statusCode, 400);
+				assert.deepStrictEqual(body, { status: 'ERROR', reason: 'Missing secret' });
 			});
 		});
 
@@ -115,8 +115,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});

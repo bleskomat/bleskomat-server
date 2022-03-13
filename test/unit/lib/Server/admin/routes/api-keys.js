@@ -16,7 +16,7 @@
 */
 
 const _ = require('underscore');
-const { expect } = require('chai');
+const assert = require('assert');
 const { generateApiKey } = require('lnurl');
 
 describe('admin', function() {
@@ -48,8 +48,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});
@@ -65,7 +65,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -76,16 +76,16 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin/overview');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/overview');
 				return this.helpers.readEnv(config.env.filePath).then(env => {
 					const apiKeys = JSON.parse(env.BLESKOMAT_SERVER_AUTH_API_KEYS);
-					expect(apiKeys).to.have.length(config.lnurl.auth.apiKeys.length);
-					expect(apiKeys).to.have.length(apiKeysBefore.length + 1);
-					_.each(apiKeys, apiKey => {
-						expect(apiKey.encoding).to.equal('hex');
-						expect(apiKey).to.have.property('id');
-						expect(apiKey).to.have.property('key');
+					assert.strictEqual(apiKeys.length, config.lnurl.auth.apiKeys.length);
+					assert.strictEqual(apiKeys.length, apiKeysBefore.length + 1);
+					apiKeys.forEach(apiKey => {
+						assert.strictEqual(apiKey.encoding, 'hex');
+						assert.notStrictEqual(typeof apiKey.id, 'undefined');
+						assert.notStrictEqual(typeof apiKey.key, 'undefined');
 					});
 				});
 			});
@@ -108,14 +108,14 @@ describe('admin', function() {
 					headers: { cookie },
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/overview');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/overview');
 					return this.helpers.readEnv(config.env.filePath).then(env => {
 						const apiKeys = JSON.parse(env.BLESKOMAT_SERVER_AUTH_API_KEYS);
 						const apiKeyFromEnv = _.findWhere(apiKeys, { id: apiKey.id });
 						const apiKeyFromEnv2 = _.findWhere(apiKeys, { id: apiKey2.id });
-						expect(apiKeyFromEnv).to.be.undefined;
-						expect(apiKeyFromEnv2).to.not.be.undefined;
+						assert.ok(!apiKeyFromEnv);
+						assert.ok(apiKeyFromEnv2);
 					});
 				});
 			});
@@ -133,9 +133,9 @@ describe('admin', function() {
 					headers: { cookie },
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(200);
-					expect(response.headers['content-disposition']).to.equal('attachment; filename=bleskomat.conf');
-					expect(response.headers['content-type']).to.equal('text/plain');
+					assert.strictEqual(response.statusCode, 200);
+					assert.strictEqual(response.headers['content-disposition'], 'attachment; filename=bleskomat.conf');
+					assert.strictEqual(response.headers['content-type'], 'text/plain');
 					const values = _.chain(body.split('\n')).map(line => {
 						if (line) {
 							const parts = line.split('=');
@@ -146,10 +146,10 @@ describe('admin', function() {
 							}
 						}
 					}).compact().object().value();
-					expect(values['apiKey.id']).to.equal(apiKey.id);
-					expect(values['apiKey.key']).to.equal(apiKey.key);
-					expect(values['apiKey.encoding']).to.equal(apiKey.encoding);
-					expect(values['callbackUrl']).to.equal(server.getCallbackUrl());
+					assert.strictEqual(values['apiKey.id'], apiKey.id);
+					assert.strictEqual(values['apiKey.key'], apiKey.key);
+					assert.strictEqual(values['apiKey.encoding'], apiKey.encoding);
+					assert.strictEqual(values['callbackUrl'], server.getCallbackUrl());
 				});
 			});
 		});

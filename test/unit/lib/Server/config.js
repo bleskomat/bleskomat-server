@@ -15,7 +15,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const { expect } = require('chai');
+const assert = require('assert');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -35,7 +35,7 @@ describe('config', function() {
 		config.env.filePath = relativePath;
 		return this.helpers.createServer(config).then(result => {
 			server = result;
-			expect(config.env.filePath).to.equal(absolutePath);
+			assert.strictEqual(config.env.filePath, absolutePath);
 		});
 	});
 
@@ -49,7 +49,7 @@ describe('config', function() {
 			})
 		}).then(() => {
 			return fs.readFile(filePath).then(contents => {
-				expect(contents.toString()).to.equal('TEST=1');
+				assert.strictEqual(contents.toString(), 'TEST=1');
 			});
 		});
 	});
@@ -61,7 +61,7 @@ describe('config', function() {
 			server = result;
 			throw new Error('Expected an error');
 		}).catch(error => {
-			expect(error.message).to.contain('no such file or directory, stat');
+			assert.match(error.message, /no such file or directory, stat/);
 		});
 	});
 
@@ -84,7 +84,7 @@ describe('config', function() {
 				server = result;
 				throw new Error('Expected an error');
 			}).catch(error => {
-				expect(error.message).to.contain('EACCES: permission denied, open');
+				assert.match(error.message, /EACCES: permission denied, open/);
 			});
 		});
 	});

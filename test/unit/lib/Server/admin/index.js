@@ -15,7 +15,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const { expect } = require('chai');
+const assert = require('assert');
 const scrypt = require('../../../../../lib/Server/admin/lib/scrypt');
 
 describe('admin', function() {
@@ -39,7 +39,7 @@ describe('admin', function() {
 				server = result;
 				throw new Error('Expected an error');
 			}).catch(error => {
-				expect(error.message).to.equal('A password is required to use the admin interface with a configured Lightning backend');
+				assert.strictEqual(error.message, 'A password is required to use the admin interface with a configured Lightning backend');
 			});
 		});
 
@@ -52,11 +52,11 @@ describe('admin', function() {
 			return this.helpers.createServer(config).then(result => {
 				server = result;
 				const hash = server.app.custom.config.admin.password;
-				expect(hash).to.be.a('string');
-				expect(hash).to.not.equal('');
-				expect(server.app.custom.config.admin.passwordPlaintext).to.equal(null);
+				assert.strictEqual(typeof hash, 'string');
+				assert.notStrictEqual(hash, '');
+				assert.strictEqual(server.app.custom.config.admin.passwordPlaintext, null);
 				return scrypt.compare(password, hash).then(correct => {
-					expect(correct).to.equal(true);
+					assert.strictEqual(correct, true);
 				});
 			});
 		});
@@ -71,13 +71,13 @@ describe('admin', function() {
 			return this.helpers.createServer(config).then(result => {
 				server = result;
 				const hash = server.app.custom.config.admin.password;
-				expect(hash).to.be.a('string');
-				expect(hash).to.not.equal('');
-				expect(server.app.custom.config.admin.passwordPlaintext).to.equal(null);
+				assert.strictEqual(typeof hash, 'string');
+				assert.notStrictEqual(hash, '');
+				assert.strictEqual(server.app.custom.config.admin.passwordPlaintext, null);
 				return scrypt.compare(password, hash).then(correct => {
-					expect(correct).to.equal(true);
+					assert.strictEqual(correct, true);
 					return scrypt.compare(newPassword, hash).then(correct2 => {
-						expect(correct2).to.equal(false);
+						assert.strictEqual(correct2, false);
 					});
 				});
 			});

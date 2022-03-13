@@ -18,7 +18,6 @@
 const _ = require('underscore');
 const coinRates = require('coin-rates');
 const { createSignature, generateRandomByteString, prepareQueryPayloadString } = require('lnurl/lib');
-const { expect } = require('chai');
 const fs = require('fs').promises;
 const http = require('http');
 const https = require('https');

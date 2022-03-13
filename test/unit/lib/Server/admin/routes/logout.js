@@ -16,7 +16,7 @@
 */
 
 const _ = require('underscore');
-const { expect } = require('chai');
+const assert = require('assert');
 
 describe('admin', function() {
 
@@ -46,7 +46,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -56,16 +56,16 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin');
 				return this.helpers.request('get', {
 					url: `${config.lnurl.url}/admin/overview`,
 					headers: { cookie },
 				}).then(result2 => {
 					const response2 = result2.response;
 					const body2 = result2.body;
-					expect(response2.statusCode).to.equal(302);
-					expect(body2).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response2.statusCode, 302);
+					assert.strictEqual(body2, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});

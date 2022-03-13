@@ -16,9 +16,9 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const cheerio = require('cheerio');
 const coinRates = require('coin-rates');
-const { expect } = require('chai');
 
 describe('admin', function() {
 
@@ -47,8 +47,8 @@ describe('admin', function() {
 					url: `${config.lnurl.url}${uri}`,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin/login');
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 				});
 			});
 		});
@@ -64,7 +64,7 @@ describe('admin', function() {
 			}).then(result => {
 				const { response } = result;
 				cookie = response.headers['set-cookie'][0];
-				expect(cookie).to.not.be.undefined;
+				assert.ok(cookie);
 			});
 		});
 
@@ -74,8 +74,8 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin/settings/general');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/settings/general');
 			});
 		});
 
@@ -85,12 +85,12 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('.form-title').text()).to.contain('General Settings');
-				expect($('form input[name=url]')).to.have.length(1);
-				expect($('form select[name=defaultExchangeRatesProvider]')).to.have.length(1);
-				expect($('form select[name=defaultExchangeRatesProvider] option')).to.have.length(coinRates.providers.length);
+				assert.match($('.form-title').text(), /General Settings/);
+				assert.strictEqual($('form input[name=url]').length, 1);
+				assert.strictEqual($('form select[name=defaultExchangeRatesProvider]').length, 1);
+				assert.strictEqual($('form select[name=defaultExchangeRatesProvider] option').length, coinRates.providers.length);
 			});
 		});
 
@@ -100,12 +100,12 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('.form-title').text()).to.contain('Login Credentials');
-				expect($('form input[name=currentPassword]')).to.have.length(1);
-				expect($('form input[name=newPassword]')).to.have.length(1);
-				expect($('form input[name=verifyNewPassword]')).to.have.length(1);
+				assert.match($('.form-title').text(), /Login Credentials/);
+				assert.strictEqual($('form input[name=currentPassword]').length, 1);
+				assert.strictEqual($('form input[name=newPassword]').length, 1);
+				assert.strictEqual($('form input[name=verifyNewPassword]').length, 1);
 			});
 		});
 
@@ -115,13 +115,13 @@ describe('admin', function() {
 				headers: { cookie },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('.form-title').text()).to.contain('Lightning Configuration');
-				expect($('form select[name=backend]')).to.have.length(1);
-				expect($('form input[name="lnd[baseUrl]"]')).to.have.length(1);
-				expect($('form textarea[name="lnd[cert]"]')).to.have.length(1);
-				expect($('form textarea[name="lnd[macaroon]"]')).to.have.length(1);
+				assert.match($('.form-title').text(), /Lightning Configuration/);
+				assert.strictEqual($('form select[name=backend]').length, 1);
+				assert.strictEqual($('form input[name="lnd[baseUrl]"]').length, 1);
+				assert.strictEqual($('form textarea[name="lnd[cert]"]').length, 1);
+				assert.strictEqual($('form textarea[name="lnd[macaroon]"]').length, 1);
 			});
 		});
 
@@ -143,9 +143,9 @@ describe('admin', function() {
 						form: _.omit(validFormData, key),
 					}).then(result => {
 						const { response, body } = result;
-						expect(response.statusCode).to.equal(400);
+						assert.strictEqual(response.statusCode, 400);
 						const $ = cheerio.load(body);
-						expect($('.form-errors').text()).to.contain(`"${label}" is required`);
+						assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
 					});
 				});
 			});
@@ -157,12 +157,12 @@ describe('admin', function() {
 					form: validFormData,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(200);
+					assert.strictEqual(response.statusCode, 200);
 					const $ = cheerio.load(body);
-					expect($('.form-success').text()).to.contain('Settings were saved successfully.');
+					assert.match($('.form-success').text(), /Settings were saved successfully./);
 					return this.helpers.readEnv(config.env.filePath).then(env => {
-						expect(env.BLESKOMAT_SERVER_URL).to.equal(validFormData.url);
-						expect(env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER).to.equal(validFormData.defaultExchangeRatesProvider);
+						assert.strictEqual(env.BLESKOMAT_SERVER_URL, validFormData.url);
+						assert.strictEqual(env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER, validFormData.defaultExchangeRatesProvider);
 					});
 				});
 			});
@@ -186,9 +186,9 @@ describe('admin', function() {
 						form: _.omit(validFormData, key),
 					}).then(result => {
 						const { response, body } = result;
-						expect(response.statusCode).to.equal(400);
+						assert.strictEqual(response.statusCode, 400);
 						const $ = cheerio.load(body);
-						expect($('.form-errors').text()).to.contain(`"${label}" is required`);
+						assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
 					});
 				});
 			});
@@ -202,9 +202,9 @@ describe('admin', function() {
 					}),
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
+					assert.strictEqual(response.statusCode, 400);
 					const $ = cheerio.load(body);
-					expect($('.form-errors').text()).to.contain('"Current Password" was incorrect');
+					assert.match($('.form-errors').text(), /"Current Password" was incorrect/);
 				});
 			});
 
@@ -217,9 +217,9 @@ describe('admin', function() {
 					}),
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(400);
+					assert.strictEqual(response.statusCode, 400);
 					const $ = cheerio.load(body);
-					expect($('.form-errors').text()).to.contain('"Verify New Password" must match "New Password"');
+					assert.match($('.form-errors').text(), /"Verify New Password" must match "New Password"/);
 				});
 			});
 
@@ -230,13 +230,13 @@ describe('admin', function() {
 					form: validFormData,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(200);
+					assert.strictEqual(response.statusCode, 200);
 					const $ = cheerio.load(body);
-					expect($('.form-success').text()).to.contain('Settings were saved successfully.');
+					assert.match($('.form-success').text(), /Settings were saved successfully./);
 					return this.helpers.readEnv(config.env.filePath).then(env => {
 						const { scrypt } = server.app.custom.lib;
 						return scrypt.compare(validFormData.newPassword, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
-							expect(correct).to.equal(true);
+							assert.strictEqual(correct, true);
 						});
 					});
 				});

@@ -16,8 +16,8 @@
 */
 
 const _ = require('underscore');
+const assert = require('assert');
 const cheerio = require('cheerio');
-const { expect } = require('chai');
 
 describe('admin', function() {
 
@@ -44,8 +44,8 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/admin/login`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin/setup');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/setup');
 			});
 		});
 
@@ -55,8 +55,8 @@ describe('admin', function() {
 				form: { password: '' },
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(302);
-				expect(body).to.equal('Found. Redirecting to /admin/setup');
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/setup');
 			});
 		});
 	});
@@ -88,10 +88,10 @@ describe('admin', function() {
 				url: `${config.lnurl.url}/admin/login`,
 			}).then(result => {
 				const { response, body } = result;
-				expect(response.statusCode).to.equal(200);
+				assert.strictEqual(response.statusCode, 200);
 				const $ = cheerio.load(body);
-				expect($('h1').text()).to.contain('Login');
-				expect($('form input[name=password]')).to.have.length(1);
+				assert.match($('h1').text(), /Login/);
+				assert.strictEqual($('form input[name=password]').length, 1);
 			});
 		});
 
@@ -111,9 +111,9 @@ describe('admin', function() {
 						form: _.omit(validFormData, key),
 					}).then(result => {
 						const { response, body } = result;
-						expect(response.statusCode).to.equal(400);
+						assert.strictEqual(response.statusCode, 400);
 						const $ = cheerio.load(body);
-						expect($('.form-errors').text()).to.contain(`"${label}" is required`);
+						assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
 					});
 				});
 			});
@@ -124,9 +124,9 @@ describe('admin', function() {
 					form: validFormData,
 				}).then(result => {
 					const { response, body } = result;
-					expect(response.statusCode).to.equal(302);
-					expect(body).to.equal('Found. Redirecting to /admin');
-					expect(response.headers['set-cookie']).to.not.be.undefined;
+					assert.strictEqual(response.statusCode, 302);
+					assert.strictEqual(body, 'Found. Redirecting to /admin');
+					assert.ok(response.headers['set-cookie']);
 					const cookie = response.headers['set-cookie'][0];
 					return this.helpers.request('get', {
 						url: `${config.lnurl.url}/admin/overview`,
@@ -134,10 +134,10 @@ describe('admin', function() {
 					}).then(result2 => {
 						const response2 = result2.response;
 						const body2 = result2.body;
-						expect(response2.statusCode).to.equal(200);
+						assert.strictEqual(response2.statusCode, 200);
 						const $ = cheerio.load(body2);
-						expect($('h1').text()).to.contain('Overview');
-						expect($('.box.lnurls')).to.have.length(1);
+						assert.match($('h1').text(), /Overview/);
+						assert.strictEqual($('.box.lnurls').length, 1);
 					});
 				});
 			});
