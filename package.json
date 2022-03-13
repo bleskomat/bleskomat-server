@@ -35,6 +35,8 @@
   },
   "homepage": "https://github.com/samotari/bleskomat-server",
   "dependencies": {
+    "@bleskomat/form": "1.2.5",
+    "@bleskomat/open-sans-fontface": "1.5.0",
     "bignumber.js": "9.0.2",
     "coin-rates": "1.1.0",
     "debug": "4.3.3",
@@ -42,9 +44,7 @@
     "express": "4.17.2",
     "express-handlebars": "6.0.2",
     "express-session": "1.17.2",
-    "form": "https://github.com/samotari/form-node/archive/refs/tags/v1.2.2.tar.gz",
     "lnurl": "0.21.0",
-    "open-sans-fontface": "https://github.com/samotari/open-sans/archive/refs/tags/1.4.2.tar.gz",
     "underscore": "1.13.2"
   },
   "devDependencies": {
