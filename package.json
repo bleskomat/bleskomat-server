@@ -12,18 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samotari/bleskomat-server.git"
+    "url": "git+https://github.com/bleskomat/bleskomat-server.git"
   },
   "author": {
-    "name": "Samotari",
-    "email": "crypto.samotari@gmail.com",
-    "url": "https://github.com/samotari"
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
   },
   "contributors": [
-    {
-      "name": "Charles Hill",
-      "email": "chill@degreesofzero.com"
-    },
     {
       "name": "Carlos Garcia Ortiz",
       "email": "yo@carlosgarciaortiz.com"
@@ -31,9 +26,9 @@
   ],
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/samotari/bleskomat-server/issues"
+    "url": "https://github.com/bleskomat/bleskomat-server/issues"
   },
-  "homepage": "https://github.com/samotari/bleskomat-server",
+  "homepage": "https://github.com/bleskomat/bleskomat-server",
   "dependencies": {
     "@bleskomat/form": "1.2.5",
     "@bleskomat/open-sans-fontface": "1.5.0",

@@ -1,8 +1,8 @@
 # bleskomat-server
 
-![Build Status](https://github.com/samotari/bleskomat-server/actions/workflows/tests.yml/badge.svg)
+![Build Status](https://github.com/bleskomat/bleskomat-server/actions/workflows/tests.yml/badge.svg)
 
-An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/samotari/bleskomat-diy) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
+An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/bleskomat/bleskomat-diy) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
 * [Usage](#usage)
 	* [Usage with Nodejs](#usage-with-nodejs)
@@ -80,7 +80,7 @@ Please refer to [Configuration Options](#configuration-options) for details abou
 
 ### Usage with Docker Compose
 
-See the [examples/docker-compose](https://github.com/samotari/bleskomat-server/blob/master/examples/docker-compose) directory for example usage.
+See the [examples/docker-compose](https://github.com/bleskomat/bleskomat-server/blob/master/examples/docker-compose) directory for example usage.
 
 Please refer to [Configuration Options](#configuration-options) for details about how to configure your server.
 
@@ -165,7 +165,7 @@ This requires that you have already logged-in to docker with `docker login`.
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/samotari/bleskomat-server/blob/master/CHANGELOG.md)
+See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-server/blob/master/CHANGELOG.md)
 
 
 ## License
