@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const cheerio = require('cheerio');
 
@@ -38,17 +37,14 @@ describe('admin', function() {
 	});
 
 	describe('not logged-in', function() {
-		_.each([
-			'/admin/help',
-		], uri => {
-			it(`GET ${uri}`, function() {
-				return this.helpers.request('get', {
-					url: `${config.lnurl.url}${uri}`,
-				}).then(result => {
-					const { response, body } = result;
-					assert.strictEqual(response.statusCode, 302);
-					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
-				});
+
+		it('GET /admin/help', function() {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}/admin/help`,
+			}).then(result => {
+				const { response, body } = result;
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 			});
 		});
 	});

@@ -41,8 +41,7 @@
     "express-session": "1.17.2",
     "lightning-backends": "1.0.2",
     "lnurl": "0.21.0",
-    "lnurl-offline": "1.1.0",
-    "underscore": "1.13.2"
+    "lnurl-offline": "1.1.0"
   },
   "devDependencies": {
     "cheerio": "1.0.0-rc.10",

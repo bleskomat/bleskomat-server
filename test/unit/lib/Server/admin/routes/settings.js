@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const cheerio = require('cheerio');
 const coinRates = require('coin-rates');
@@ -39,17 +38,14 @@ describe('admin', function() {
 	});
 
 	describe('not logged-in', function() {
-		_.each([
-			'/admin/settings',
-		], uri => {
-			it(`GET ${uri}`, function() {
-				return this.helpers.request('get', {
-					url: `${config.lnurl.url}${uri}`,
-				}).then(result => {
-					const { response, body } = result;
-					assert.strictEqual(response.statusCode, 302);
-					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
-				});
+
+		it('GET /admin/settings', function() {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}/admin/settings`,
+			}).then(result => {
+				const { response, body } = result;
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 			});
 		});
 	});
@@ -132,15 +128,17 @@ describe('admin', function() {
 				defaultExchangeRatesProvider: 'kraken',
 			};
 
-			_.each({
+			Object.entries({
 				url: 'Server Base URL',
 				defaultExchangeRatesProvider: 'Exchange Rates Provider',
-			}, (label, key) => {
+			}).forEach(([key, label], index) => {
 				it(`missing ${label}`, function() {
+					let form = JSON.parse(JSON.stringify(validFormData));
+					delete form[key];
 					return this.helpers.request('post', {
 						url: `${config.lnurl.url}/admin/settings/general`,
 						headers: { cookie },
-						form: _.omit(validFormData, key),
+						form,
 					}).then(result => {
 						const { response, body } = result;
 						assert.strictEqual(response.statusCode, 400);
@@ -176,14 +174,16 @@ describe('admin', function() {
 				verifyNewPassword: 'test2',
 			};
 
-			_.each({
+			Object.entries({
 				currentPassword: 'Current Password',
-			}, (label, key) => {
+			}).forEach(([key, label], index) => {
 				it(`missing ${label}`, function() {
+					let form = JSON.parse(JSON.stringify(validFormData));
+					delete form[key];
 					return this.helpers.request('post', {
 						url: `${config.lnurl.url}/admin/settings/login`,
 						headers: { cookie },
-						form: _.omit(validFormData, key),
+						form,
 					}).then(result => {
 						const { response, body } = result;
 						assert.strictEqual(response.statusCode, 400);
@@ -197,7 +197,7 @@ describe('admin', function() {
 				return this.helpers.request('post', {
 					url: `${config.lnurl.url}/admin/settings/login`,
 					headers: { cookie },
-					form: _.extend({}, validFormData, {
+					form: Object.assign({}, validFormData, {
 						currentPassword: 'incorrect',
 					}),
 				}).then(result => {
@@ -212,7 +212,7 @@ describe('admin', function() {
 				return this.helpers.request('post', {
 					url: `${config.lnurl.url}/admin/settings/login`,
 					headers: { cookie },
-					form: _.extend({}, validFormData, {
+					form: Object.assign({}, validFormData, {
 						verifyNewPassword: `x${validFormData.newPassword}`,
 					}),
 				}).then(result => {

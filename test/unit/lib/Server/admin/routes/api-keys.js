@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const { generateApiKey } = require('lnurl-offline');
 
@@ -38,11 +37,12 @@ describe('admin', function() {
 	});
 
 	describe('not logged-in', function() {
-		_.each([
+
+		[
 			'/admin/api-key/add',
 			'/admin/api-key/xxx/delete',
 			'/admin/api-key/xxx/download-config',
-		], uri => {
+		].forEach(uri => {
 			it(`GET ${uri}`, function() {
 				return this.helpers.request('get', {
 					url: `${config.lnurl.url}${uri}`,
@@ -112,8 +112,8 @@ describe('admin', function() {
 					assert.strictEqual(body, 'Found. Redirecting to /admin/overview');
 					return this.helpers.readEnv(config.env.filePath).then(env => {
 						const apiKeys = JSON.parse(env.BLESKOMAT_SERVER_AUTH_API_KEYS);
-						const apiKeyFromEnv = _.findWhere(apiKeys, { id: apiKey.id });
-						const apiKeyFromEnv2 = _.findWhere(apiKeys, { id: apiKey2.id });
+						const apiKeyFromEnv = apiKeys.find(obj => obj.id === apiKey.id);
+						const apiKeyFromEnv2 = apiKeys.find(obj => obj.id === apiKey2.id);
 						assert.ok(!apiKeyFromEnv);
 						assert.ok(apiKeyFromEnv2);
 					});
@@ -136,16 +136,17 @@ describe('admin', function() {
 					assert.strictEqual(response.statusCode, 200);
 					assert.strictEqual(response.headers['content-disposition'], 'attachment; filename=bleskomat.conf');
 					assert.strictEqual(response.headers['content-type'], 'text/plain');
-					const values = _.chain(body.split('\n')).map(line => {
+					let values = {};
+					body.split('\n').forEach(line => {
 						if (line) {
 							const parts = line.split('=');
 							const key = parts[0];
 							if (key) {
 								const value = parts[1];
-								return [ key, value ];
+								values[key] = value;
 							}
 						}
-					}).compact().object().value();
+					});
 					assert.strictEqual(values['apiKey.id'], apiKey.id);
 					assert.strictEqual(values['apiKey.key'], apiKey.key);
 					assert.strictEqual(values['apiKey.encoding'], apiKey.encoding);

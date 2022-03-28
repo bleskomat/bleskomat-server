@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const path = require('path');
 
 let config = {

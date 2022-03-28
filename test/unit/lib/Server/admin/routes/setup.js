@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const cheerio = require('cheerio');
 
@@ -58,14 +57,16 @@ describe('admin', function() {
 			verifyPassword: 'test',
 		};
 
-		_.each({
+		Object.entries({
 			password: 'Password',
 			verifyPassword: 'Verify Password',
-		}, (label, key) => {
+		}).forEach(([key, label], index) => {
 			it(`missing ${label}`, function() {
+				let form = JSON.parse(JSON.stringify(validFormData));
+				delete form[key];
 				return this.helpers.request('post', {
 					url: `${config.lnurl.url}/admin/setup`,
-					form: _.omit(validFormData, key),
+					form,
 				}).then(result => {
 					const { response, body } = result;
 					assert.strictEqual(response.statusCode, 400);

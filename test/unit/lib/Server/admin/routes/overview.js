@@ -15,7 +15,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const cheerio = require('cheerio');
 const { generateApiKey } = require('lnurl-offline');
@@ -39,17 +38,14 @@ describe('admin', function() {
 	});
 
 	describe('not logged-in', function() {
-		_.each([
-			'/admin/overview',
-		], uri => {
-			it(`GET ${uri}`, function() {
-				return this.helpers.request('get', {
-					url: `${config.lnurl.url}${uri}`,
-				}).then(result => {
-					const { response, body } = result;
-					assert.strictEqual(response.statusCode, 302);
-					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
-				});
+
+		it('GET /admin/overview', function() {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}/admin/overview`,
+			}).then(result => {
+				const { response, body } = result;
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 			});
 		});
 	});
