@@ -15,14 +15,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const coinRates = require('coin-rates');
-const { createSignature, generateRandomByteString, prepareQueryPayloadString } = require('lnurl/lib');
 const fs = require('fs').promises;
 const http = require('http');
 const https = require('https');
 const path = require('path');
-const pem = require('pem');
 const { Server } = require('../lib');
 const querystring = require('querystring');
 const url = require('url');
@@ -35,7 +32,7 @@ coinRates.providers.push({
 	},
 });
 
-if (_.isUndefined(process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER)) {
+if (typeof process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER === 'undefined') {
 	process.env.BLESKOMAT_SERVER_COINRATES_DEFAULTS_PROVIDER = 'dummy';
 }
 
@@ -53,66 +50,8 @@ module.exports = {
 		let config = JSON.parse(JSON.stringify(require('../config')));
 		config.lnurl.store.config.noWarning = true;
 		config.env.filePath = path.join(this.tmpDir, '.env');
-		config.getTlsCertAndFingerprint.timeout = 200;
+		config.tlsCheck.timeout = 200;
 		return config;
-	},
-
-	createHttpsServer: function(port, host) {
-		port = port || 18080;
-		host = host || '127.0.0.1';
-		return this.createPemCertificate({ altNames: [ host ] }).then(pem => {
-			return new Promise((resolve, reject) => {
-				try {
-					let server = https.createServer({
-						key: pem.serviceKey,
-						cert: pem.certificate,
-					}).listen(port, host, () => {
-						resolve(server);
-					});
-					// Keep a hash of connected sockets.
-					// This is used when closing the server - when force-closing all socket connections.
-					let sockets = {};
-					server.on('connection', function(socket) {
-						const socketId = _.uniqueId('test:helper:https-server:socket:').split('-')[1];
-						sockets[socketId] = socket;
-						socket.once('close', function() {
-							delete sockets[socketId];
-						});
-					});
-					server.hostname = `${host}:${port}`;
-					server.pem = pem;
-					const close = server.close.bind(server);
-					server.close = function() {
-						_.invoke(sockets, 'destroy');
-						return new Promise((closeResolve, closeReject) => {
-							close(error => {
-								if (error) return closeReject(error);
-								closeResolve();
-							});
-						});
-					};
-				} catch (error) {
-					return reject(error);
-				}
-			});
-		});
-	},
-
-	createPemCertificate: function(options) {
-		options = _.defaults(options || {}, {
-			selfSigned: true,
-			days: 3650,
-		});
-		return new Promise((resolve, reject) => {
-			try {
-				pem.createCertificate(options, (error, result) => {
-					if (error) return reject(error);
-					resolve(result);
-				});
-			} catch (error) {
-				return reject(error);
-			}
-		});
 	},
 
 	createServer: function(config) {
@@ -120,10 +59,10 @@ module.exports = {
 			const server = new Server(config);
 			const close = server.close.bind(server);
 			server.close = function(options) {
-				options = _.defaults(options || {}, {
+				options = Object.assign({
 					force: true,// Force-close socket connections
 					store: false,// Do not close the data store
-				});
+				}, options || {});
 				return close(options).then(() => {
 					let promises = [];
 					if (server.store.db && server.store.db.migrate) {
@@ -152,18 +91,6 @@ module.exports = {
 		}
 	},
 
-	prepareSignedQuery: function(apiKey, query) {
-		query = query || {};
-		query.id = apiKey.id;
-		if (_.isUndefined(query.nonce)) {
-			query.nonce = generateRandomByteString();
-		}
-		const payload = prepareQueryPayloadString(query);
-		const signature = createSignature(payload, Buffer.from(apiKey.key, apiKey.encoding));
-		query.signature = signature;
-		return query;
-	},
-
 	readEnv: function(filePath) {
 		return fs.readFile(filePath).then(buffer => {
 			return require('dotenv').parse(buffer);
@@ -173,7 +100,7 @@ module.exports = {
 	removeDir: function(dirPath) {
 		return fs.readdir(dirPath).then(files => {
 			// Delete all files in the directory.
-			return Promise.all(_.map(files, file => {
+			return Promise.all(files.map(file => {
 				const filePath = path.join(dirPath, file);
 				return fs.stat(filePath).then(stat => {
 					if (stat.isDirectory()) {
@@ -203,13 +130,14 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			try {
 				const parsedUrl = url.parse(requestOptions.url);
-				let options = _.chain(requestOptions).pick('ca', 'headers').extend({
+				let options = {
 					method: method.toUpperCase(),
 					hostname: parsedUrl.hostname,
 					port: parsedUrl.port,
 					path: parsedUrl.path,
-				}).value();
-				options.headers = options.headers || {};
+					ca: requestOptions.ca || null,
+					headers: requestOptions.headers || {},
+				};
 				if (requestOptions.qs) {
 					options.path += '?' + querystring.stringify(requestOptions.qs);
 				}

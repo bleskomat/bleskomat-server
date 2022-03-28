@@ -17,7 +17,7 @@
 
 const assert = require('assert');
 const coinRates = require('coin-rates');
-const { createHash } = require('lnurl/lib');
+const crypto = require('crypto');
 
 coinRates.providers.push({
 	name: 'lnurlposTests',
@@ -126,7 +126,7 @@ describe('lnurlpos', function() {
 				const match = callback.match(new RegExp(`^${config.lnurl.url}${config.lnurl.endpoint}/([a-z0-9]+)$`));
 				const k1 = match && match[1] || null;
 				assert.ok(k1);
-				const hash = createHash(k1);
+				const hash = crypto.createHash('sha256').update(Buffer.from(k1, 'hex')).digest('hex');
 				return server.store.fetch(hash).then(fetchedUrl => {
 					assert.ok(fetchedUrl);
 					assert.strictEqual(fetchedUrl.tag, 'payRequest');

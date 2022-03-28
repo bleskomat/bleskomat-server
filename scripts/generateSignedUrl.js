@@ -15,7 +15,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const { createSignedUrl } = require('lnurl');
+const { createSignedUrl } = require('lnurl-offline');
 const path = require('path');
 
 // https://github.com/motdotla/dotenv#usage

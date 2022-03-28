@@ -55,11 +55,11 @@ let config = {
 	env: {
 		filePath: process.env.BLESKOMAT_SERVER_ENV_FILEPATH || path.join(__dirname, '.env'),
 	},
-	getTlsCertAndFingerprint: {
+	tlsCheck: {
 		timeout: 5000,
 	},
 	lnurlpos: {
-		enabled: _.isUndefined(process.env.BLESKOMAT_LNURLPOS_ENABLED) || process.env.BLESKOMAT_LNURLPOS_ENABLED === 'true',
+		enabled: typeof process.env.BLESKOMAT_LNURLPOS_ENABLED === 'undefined' || process.env.BLESKOMAT_LNURLPOS_ENABLED === 'true',
 	},
 };
 

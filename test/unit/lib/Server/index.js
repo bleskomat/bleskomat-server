@@ -15,10 +15,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
 const coinRates = require('coin-rates');
-const { createHash, generateApiKey, generatePaymentRequest } = require('lnurl/lib');
+const crypto = require('crypto');
+const { generatePaymentRequest } = require('lightning-backends');
+const { generateApiKey, prepareSignedQuery } = require('lnurl-offline');
 const url = require('url');
 
 coinRates.providers.push({
@@ -82,7 +83,7 @@ describe('Server(config)', function() {
 		});
 
 		it('missing API key ID', function() {
-			let query = this.helpers.prepareSignedQuery(apiKey);
+			let query = prepareSignedQuery(apiKey, 'withdrawRequest');
 			delete query.id;
 			return this.helpers.request('get', {
 				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
@@ -95,13 +96,11 @@ describe('Server(config)', function() {
 			});
 		});
 
-		_.each(['channelRequest', 'login', 'payRequest'], tag => {
+		['channelRequest', 'login', 'payRequest'].forEach(tag => {
 			it(`unsupported tag: "${tag}"`, function() {
 				return this.helpers.request('get', {
 					url: `${config.lnurl.url}${config.lnurl.endpoint}`,
-					qs: this.helpers.prepareSignedQuery(apiKey, {
-						tag,
-					}),
+					qs: prepareSignedQuery(apiKey, tag),
 				}).then(result => {
 					const { response, body } = result;
 					assert.strictEqual(response.statusCode, 400);
@@ -113,8 +112,7 @@ describe('Server(config)', function() {
 		it('min/maxWithdrawable not equal', function() {
 			return this.helpers.request('get', {
 				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
-				qs: this.helpers.prepareSignedQuery(apiKey, {
-					tag: 'withdrawRequest',
+				qs: prepareSignedQuery(apiKey, 'withdrawRequest', {
 					fiatCurrency: 'EUR',
 					minWithdrawable: '1.00',
 					maxWithdrawable: '2.00',
@@ -130,8 +128,7 @@ describe('Server(config)', function() {
 		it('missing fiat currency symbol', function() {
 			return this.helpers.request('get', {
 				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
-				qs: this.helpers.prepareSignedQuery(apiKey, {
-					tag: 'withdrawRequest',
+				qs: prepareSignedQuery(apiKey, 'withdrawRequest', {
 					minWithdrawable: '1.00',
 					maxWithdrawable: '1.00',
 					defaultDescription: '',
@@ -146,8 +143,7 @@ describe('Server(config)', function() {
 		it('valid, signed lnurl-withdraw request', function() {
 			return this.helpers.request('get', {
 				url: `${config.lnurl.url}${config.lnurl.endpoint}`,
-				qs: this.helpers.prepareSignedQuery(apiKey, {
-					tag: 'withdrawRequest',
+				qs: prepareSignedQuery(apiKey, 'withdrawRequest', {
 					fiatCurrency: 'EUR',
 					minWithdrawable: '1.00',
 					maxWithdrawable: '1.00',
@@ -163,7 +159,7 @@ describe('Server(config)', function() {
 				assert.ok(body.k1);
 				assert.strictEqual(body.tag, 'withdrawRequest');
 				const { callback, k1 } = body;
-				const hash = createHash(k1);
+				const hash = crypto.createHash('sha256').update(Buffer.from(k1, 'hex')).digest('hex');
 				return server.store.fetch(hash).then(fetchedUrl => {
 					assert.notStrictEqual(fetchedUrl, null);
 					assert.strictEqual(typeof fetchedUrl, 'object');
@@ -196,8 +192,7 @@ describe('Server(config)', function() {
 			it('should use the correct exchange rates provider', function() {
 				return this.helpers.request('get', {
 					url: `${config.lnurl.url}${config.lnurl.endpoint}`,
-					qs: this.helpers.prepareSignedQuery(apiKeyNonDefault, {
-						tag: 'withdrawRequest',
+					qs: prepareSignedQuery(apiKeyNonDefault, 'withdrawRequest', {
 						fiatCurrency: 'EUR',
 						minWithdrawable: '1.00',
 						maxWithdrawable: '1.00',

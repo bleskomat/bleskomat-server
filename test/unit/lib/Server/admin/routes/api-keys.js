@@ -17,7 +17,7 @@
 
 const _ = require('underscore');
 const assert = require('assert');
-const { generateApiKey } = require('lnurl');
+const { generateApiKey } = require('lnurl-offline');
 
 describe('admin', function() {
 

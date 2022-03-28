@@ -15,8 +15,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const _ = require('underscore');
 const assert = require('assert');
+const https = require('https');
+const pem = require('pem');
 
 describe('admin', function() {
 
@@ -31,14 +32,26 @@ describe('admin', function() {
 	});
 
 	let httpsServer;
-	before(function() {
-		return this.helpers.createHttpsServer().then(result => {
-			httpsServer = result;
+	before(function(done) {
+		const host = '127.0.0.1';
+		const port = 18080;
+		const hostname = `${host}:${port}`;
+		pem.createCertificate({
+			selfSigned: true,
+			days: 30,
+			altNames: [ host ],
+		}, (error, result) => {
+			if (error) return done(error);
+			const key = result.serviceKey;
+			const cert = result.certificate;
+			httpsServer = https.createServer({ key, cert }).listen(port, host, () => done());
+			httpsServer.hostname = hostname;
 		});
 	});
 
-	after(function() {
-		return httpsServer.close();
+	after(function(done) {
+		if (httpsServer) return httpsServer.close(done);
+		done();
 	});
 
 	after(function() {
@@ -48,17 +61,14 @@ describe('admin', function() {
 	});
 
 	describe('not logged-in', function() {
-		_.each([
-			'/admin/tls-check',
-		], uri => {
-			it(`GET ${uri}`, function() {
-				return this.helpers.request('get', {
-					url: `${config.lnurl.url}${uri}`,
-				}).then(result => {
-					const { response, body } = result;
-					assert.strictEqual(response.statusCode, 302);
-					assert.strictEqual(body, 'Found. Redirecting to /admin/login');
-				});
+
+		it('GET /admin/tls-check', function() {
+			return this.helpers.request('get', {
+				url: `${config.lnurl.url}/admin/tls-check`,
+			}).then(result => {
+				const { response, body } = result;
+				assert.strictEqual(response.statusCode, 302);
+				assert.strictEqual(body, 'Found. Redirecting to /admin/login');
 			});
 		});
 	});
@@ -99,7 +109,7 @@ describe('admin', function() {
 				}).then(result => {
 					const { response, body } = result;
 					assert.strictEqual(response.statusCode, 400);
-					assert.deepStrictEqual(body, { status: 400, error: 'Unable to parse hostname' });
+					assert.deepStrictEqual(body, { status: 400, error: 'Invalid hostname' });
 				});
 			});
 
