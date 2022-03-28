@@ -33,11 +33,11 @@
     "@bleskomat/form": "1.2.5",
     "@bleskomat/open-sans-fontface": "1.5.0",
     "bignumber.js": "9.0.2",
-    "coin-rates": "1.1.0",
-    "debug": "4.3.3",
-    "dotenv": "14.2.0",
-    "express": "4.17.2",
-    "express-handlebars": "6.0.2",
+    "coin-rates": "1.1.1",
+    "debug": "4.3.4",
+    "dotenv": "16.0.0",
+    "express": "4.17.3",
+    "express-handlebars": "6.0.3",
     "express-session": "1.17.2",
     "lightning-backends": "1.0.2",
     "lnurl": "0.21.0",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "cheerio": "1.0.0-rc.10",
-    "mocha": "9.2.0",
-    "pem": "1.14.5"
+    "mocha": "9.2.2",
+    "pem": "1.14.6"
   }
 }
