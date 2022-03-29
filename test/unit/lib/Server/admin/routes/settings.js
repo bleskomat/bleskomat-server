@@ -18,6 +18,9 @@
 const assert = require('assert');
 const cheerio = require('cheerio');
 const coinRates = require('coin-rates');
+const crypto = require('crypto');
+const https = require('https');
+const pem = require('pem');
 
 describe('admin', function() {
 
@@ -238,6 +241,85 @@ describe('admin', function() {
 						return scrypt.compare(validFormData.newPassword, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
 							assert.strictEqual(correct, true);
 						});
+					});
+				});
+			});
+		});
+
+		describe('POST /admin/settings/lightning', function() {
+
+			let validFormData = {
+				backend: 'lnd',
+				'lnd[baseUrl]': 'https://127.0.0.1:8080',
+				'lnd[cert]': '',
+				'lnd[macaroon]': '',
+			};
+
+			let httpsServer;
+			before(function(done) {
+				const host = '127.0.0.1';
+				const port = 18080;
+				const hostname = `${host}:${port}`;
+				const macaroon = crypto.randomBytes(64).toString('hex');
+				pem.createCertificate({
+					selfSigned: true,
+					days: 30,
+					altNames: [ host ],
+				}, (error, result) => {
+					if (error) return done(error);
+					const key = result.serviceKey;
+					const cert = result.certificate;
+					httpsServer = https.createServer({ key, cert }, (req, res) => {
+						res.end('\n{"payment_error":"no_route"}');
+					}).listen(port, host, () => done());
+					validFormData['lnd[baseUrl]'] = `https://${hostname}`;
+					validFormData['lnd[cert]'] = cert;
+					validFormData['lnd[macaroon]'] = macaroon;
+				});
+			});
+
+			after(function(done) {
+				if (httpsServer) return httpsServer.close(done);
+				done();
+			});
+
+			Object.entries({
+				'lnd[baseUrl]': 'Base URL',
+				'lnd[cert]': 'TLS Certificate',
+				'lnd[macaroon]': 'Macaroon (hex)',
+			}).forEach(([key, label], index)  => {
+				it(`missing ${key}`, function() {
+					let form = JSON.parse(JSON.stringify(validFormData));
+					delete form[key];
+					return this.helpers.request('post', {
+						url: `${config.lnurl.url}/admin/settings/lightning`,
+						headers: { cookie },
+						form,
+					}).then(result => {
+						const { response, body } = result;
+						assert.strictEqual(response.statusCode, 400);
+						const $ = cheerio.load(body);
+						assert.ok($('.form-errors').text().indexOf(`"${label}" is required`) !== -1, `Expected error: "${label}" is required`);
+					});
+				});
+			});
+
+			it('valid form inputs', function() {
+				return this.helpers.request('post', {
+					url: `${config.lnurl.url}/admin/settings/lightning`,
+					headers: { cookie },
+					form: validFormData,
+				}).then(result => {
+					const { response, body } = result;
+					assert.strictEqual(response.statusCode, 200);
+					const $ = cheerio.load(body);
+					assert.ok($('.form-success').text().indexOf('Settings were saved successfully.') !== -1);
+					return this.helpers.readEnv(config.env.filePath).then(env => {
+						const lightning = JSON.parse(env.BLESKOMAT_SERVER_LIGHTNING);
+						assert.strictEqual(lightning.backend, validFormData.backend);
+						assert.strictEqual(lightning.config.baseUrl, validFormData['lnd[baseUrl]']);
+						assert.strictEqual(lightning.config.cert, validFormData['lnd[cert]']);
+						assert.strictEqual(lightning.config.macaroon, validFormData['lnd[macaroon]']);
 					});
 				});
 			});
