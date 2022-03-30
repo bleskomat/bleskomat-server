@@ -4,6 +4,7 @@
 
 An open-source web server that facilitates Lightning Network payments on behalf of one or more Bleskomat ATMs. This project can be used with both the [Bleskomat DIY project](https://github.com/bleskomat/bleskomat-diy) as well as the commercial [Bleskomat ATM product](https://www.bleskomat.com).
 
+* [Support](#support)
 * [Usage](#usage)
 	* [Usage with Nodejs](#usage-with-nodejs)
 	* [Usage with Docker](#usage-with-docker)
@@ -16,6 +17,11 @@ An open-source web server that facilitates Lightning Network payments on behalf 
 * [Changelog](#changelog)
 * [License](#license)
 * [Trademark](#trademark)
+
+
+## Support
+
+Need some help? Join us in the official [Telegram group](https://t.me/bleskomat) or send us an email at [support@bleskomat.com](mailto:support@bleskomat.com) and we will try our best to respond in a reasonable time. If you have a feature request or bug to report, please [open an issue](https://github.com/bleskomat/bleskomat-server/issues) in this project repository.
 
 
 ## Usage
