@@ -17,6 +17,7 @@
 
 const assert = require('assert');
 const cheerio = require('cheerio');
+const scrypt = require('@bleskomat/scrypt');
 
 describe('admin', function() {
 
@@ -100,7 +101,6 @@ describe('admin', function() {
 				assert.strictEqual(response.statusCode, 302);
 				assert.strictEqual(body, 'Found. Redirecting to /admin');
 				return this.helpers.readEnv(config.env.filePath).then(env => {
-					const { scrypt } = server.app.custom.lib;
 					return scrypt.compare(validFormData.password, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
 						assert.strictEqual(correct, true);
 					});

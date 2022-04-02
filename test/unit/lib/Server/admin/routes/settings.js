@@ -21,6 +21,7 @@ const coinRates = require('coin-rates');
 const crypto = require('crypto');
 const https = require('https');
 const pem = require('pem');
+const scrypt = require('@bleskomat/scrypt');
 
 describe('admin', function() {
 
@@ -28,7 +29,7 @@ describe('admin', function() {
 	before(function() {
 		config = this.helpers.prepareConfig();
 		config.admin.web = true;
-		config.admin.password = '2904be08aa871adedb4be91160f4d4a10cb36321;32;16;bceb4bd3444c2be5e3e544891118d5150cc2385232d1787097467aa60993cdd0';// test
+		config.admin.password = '$scrypt$1$6$ajRPedLuznRgJNBrLrZAoShksAA=$2sfIQl3MRJnbbVDnWPDqGpTBlW0SFcUdebmr+f08rrs=';// test
 		return this.helpers.createServer(config).then(result => {
 			server = result;
 		});
@@ -237,7 +238,6 @@ describe('admin', function() {
 					const $ = cheerio.load(body);
 					assert.match($('.form-success').text(), /Settings were saved successfully./);
 					return this.helpers.readEnv(config.env.filePath).then(env => {
-						const { scrypt } = server.app.custom.lib;
 						return scrypt.compare(validFormData.newPassword, env.BLESKOMAT_SERVER_ADMIN_PASSWORD).then(correct => {
 							assert.strictEqual(correct, true);
 						});

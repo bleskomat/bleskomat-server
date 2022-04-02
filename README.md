@@ -108,7 +108,7 @@ Below is a list of configuration options for the bleskomat server:
 * `BLESKOMAT_SERVER_ADMIN_PASSWORD` - Hashed password which is used to authenticate user sessions in the web-based admin interface. See [How to create admin password hash](#how-to-create-admin-password-hash).
 * `BLESKOMAT_SERVER_ADMIN_PASSWORD_PLAINTEXT` - Plaintext password which is used to authenticate user sessions in the web-based admin interface. Use of this environment variable is discouraged. It is more secure to pass the hashed password instead - see `BLESKOMAT_SERVER_ADMIN_PASSWORD` above.
 * `BLESKOMAT_SERVER_ADMIN_SESSION` - Stringified JSON object containing configuration options for an instance of the [express-session](https://github.com/expressjs/session#api) middleware.
-* `BLESKOMAT_SERVER_ADMIN_SCRYPT` - Stringified JSON object containing configuration options for [crypto.scrypt](https://nodejs.org/docs/latest-v12.x/api/crypto.html#crypto_crypto_scrypt_password_salt_keylen_options_callback).
+* `BLESKOMAT_SERVER_ADMIN_SCRYPT` - Stringified JSON object containing configuration options for [scrypt-node](https://github.com/bleskomat/scrypt-node).
 * `BLESKOMAT_SERVER_TORSOCKSPROXY` - The hostname of the TOR socks proxy. Used when connecting to an LN backend behind TOR hidden service. Default value is `127.0.0.1:9050`
 
 

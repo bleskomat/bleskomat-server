@@ -17,7 +17,7 @@
 
 const passwordArg = process.argv[2] || null;
 
-const scrypt = require('../lib/Server/admin/lib/scrypt');
+const scrypt = require('@bleskomat/scrypt');
 const path = require('path');
 
 // https://github.com/motdotla/dotenv#usage
@@ -28,28 +28,20 @@ require('dotenv').config({
 
 const config = require('../config');
 
-const done = function(error, output) {
-	if (error) {
-		console.error(error);
-		process.exit(1);
-	}
-	if (output) {
-		process.stdout.write(output);
-	}
-	process.exit();
-};
-
-const doHash = function(password) {
+const createHash = function(password) {
 	const { keylen, options, saltBytes } = config.admin.scrypt;
 	const salt = scrypt.generateSalt(saltBytes);
-	return scrypt.hash(password, salt, keylen, options).then(hash => {
-		done(null, hash);
-	}).catch(done);
+	return scrypt.hashSync(password, salt, keylen, options);
 };
 
 if (passwordArg) {
-	return doHash(passwordArg);
+	// Password passed as an argument to this script.
+	const hash = createHash(passwordArg);
+	process.stdout.write(`${hash}\n`);
+	process.exit();
 }
+
+// Ask the script user to provide the password via CLI prompt.
 
 const readline = require('readline');
 const { Writable } = require('stream');
@@ -73,13 +65,19 @@ const rl = readline.createInterface({
 
 console.log('Use CTRL+C to cancel at any time');
 
-rl.question(`Please enter the password to be hashed: `, password => {
+rl.question(`Please enter the password to be hashed: \n`, password => {
 	rl.close();
 	mutableStdout.muted = false;
 	if (!password) {
-		return done(new Error('An empty-string password is not allowed'));
+		console.error('ERROR: An empty-string password is not allowed');
+		process.exit(1);
 	}
-	return doHash(password);
+	let hash;
+	try { hash = createHash(password); } catch (error) {
+		console.error(error);
+		process.exit(1);
+	}
+	process.stdout.write(`${hash}\n`);
 });
 
 mutableStdout.muted = true;

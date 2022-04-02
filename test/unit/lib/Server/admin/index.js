@@ -16,7 +16,7 @@
 */
 
 const assert = require('assert');
-const scrypt = require('../../../../../lib/Server/admin/lib/scrypt');
+const scrypt = require('@bleskomat/scrypt');
 
 describe('admin', function() {
 
@@ -66,7 +66,7 @@ describe('admin', function() {
 			const password = 'test';// matches the hashed password below
 			const newPassword = 'test2';
 			config.admin.web = true;
-			config.admin.password = '8d2ae4b900956fc55cecd824213fc7d433d5e8ec0c554ca9c97e896f1e736157;4096;83da6e19afea72acff9526f959408b284bcdff0e7795912a13dbab3229225813';
+			config.admin.password = '$scrypt$1$6$ajRPedLuznRgJNBrLrZAoShksAA=$2sfIQl3MRJnbbVDnWPDqGpTBlW0SFcUdebmr+f08rrs=';
 			config.admin.passwordPlaintext = newPassword;
 			return this.helpers.createServer(config).then(result => {
 				server = result;

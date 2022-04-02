@@ -62,83 +62,112 @@ describe('admin', function() {
 
 	describe('enabled with password', function() {
 
-		const validFormData = {
-			password: 'test',
-		};
+		[
+			{
+				description: 'legacy format = "salt;keylen;cost;derivedKey"',
+				hash: '62356789b3e8cb63ffd548335c70b909ca608063;32;4096;219ae2fccb20f3dec76efd63055f207e501a024b5edd4b9c555fe15d4c90f4bc',
+			},
+			{
+				description: 'legacy format = "salt;cost;derivedKey"',
+				hash: '62356789b3e8cb63ffd548335c70b909ca608063;4096;219ae2fccb20f3dec76efd63055f207e501a024b5edd4b9c555fe15d4c90f4bc',
+			},
+			{
+				description: '@bleskomat/scrypt serialization format',
+				hash: '$scrypt$1$6$ajRPedLuznRgJNBrLrZAoShksAA=$2sfIQl3MRJnbbVDnWPDqGpTBlW0SFcUdebmr+f08rrs=',
+			},
+		].forEach(group => {
 
-		let config, server;
-		before(function() {
-			config = this.helpers.prepareConfig();
-			config.admin.web = true;
-			config.admin.password = '2904be08aa871adedb4be91160f4d4a10cb36321;32;16;bceb4bd3444c2be5e3e544891118d5150cc2385232d1787097467aa60993cdd0';// test
-			return this.helpers.createServer(config).then(result => {
-				server = result;
-			});
-		});
+			const { description, hash } = group;
 
-		after(function() {
-			if (server) return server.close({ force: true }).then(() => {
-				server = null;
-			});
-		});
+			describe(description, function() {
 
-		it('GET /admin/login', function() {
-			return this.helpers.request('get', {
-				url: `${config.lnurl.url}/admin/login`,
-			}).then(result => {
-				const { response, body } = result;
-				assert.strictEqual(response.statusCode, 200);
-				const $ = cheerio.load(body);
-				assert.match($('h1').text(), /Login/);
-				assert.strictEqual($('form input[name=password]').length, 1);
-			});
-		});
-
-		describe('POST /admin/login', function() {
-
-			const validFormData = {
-				password: 'test',
-				verifyPassword: 'test',
-			};
-
-			Object.entries({
-				password: 'Password',
-			}).forEach(([key, label], index) => {
-				it(`missing ${label}`, function() {
-					let form = JSON.parse(JSON.stringify(validFormData));
-					delete form[key];
-					return this.helpers.request('post', {
-						url: `${config.lnurl.url}/admin/login`,
-						form,
-					}).then(result => {
-						const { response, body } = result;
-						assert.strictEqual(response.statusCode, 400);
-						const $ = cheerio.load(body);
-						assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
+				let config, server;
+				before(function() {
+					config = this.helpers.prepareConfig();
+					config.admin.web = true;
+					config.admin.password = hash;
+					return this.helpers.createServer(config).then(result => {
+						server = result;
 					});
 				});
-			});
 
-			it('valid form data', function() {
-				return this.helpers.request('post', {
-					url: `${config.lnurl.url}/admin/login`,
-					form: validFormData,
-				}).then(result => {
-					const { response, body } = result;
-					assert.strictEqual(response.statusCode, 302);
-					assert.strictEqual(body, 'Found. Redirecting to /admin');
-					assert.ok(response.headers['set-cookie']);
-					const cookie = response.headers['set-cookie'][0];
+				after(function() {
+					if (server) return server.close({ force: true }).then(() => {
+						server = null;
+					});
+				});
+
+				it('GET /admin/login', function() {
 					return this.helpers.request('get', {
-						url: `${config.lnurl.url}/admin/overview`,
-						headers: { cookie },
-					}).then(result2 => {
-						const response2 = result2.response;
-						const body2 = result2.body;
-						assert.strictEqual(response2.statusCode, 200);
-						const $ = cheerio.load(body2);
-						assert.match($('h1').text(), /Overview/);
-						assert.strictEqual($('.box.lnurls').length, 1);
+						url: `${config.lnurl.url}/admin/login`,
+					}).then(result => {
+						const { response, body } = result;
+						assert.strictEqual(response.statusCode, 200);
+						const $ = cheerio.load(body);
+						assert.match($('h1').text(), /Login/);
+						assert.strictEqual($('form input[name=password]').length, 1);
+					});
+				});
+
+				describe('POST /admin/login', function() {
+
+					const validFormData = {
+						password: 'test',
+					};
+
+					Object.entries({
+						password: 'Password',
+					}).forEach(([key, label], index) => {
+						it(`missing ${label}`, function() {
+							let form = JSON.parse(JSON.stringify(validFormData));
+							delete form[key];
+							return this.helpers.request('post', {
+								url: `${config.lnurl.url}/admin/login`,
+								form,
+							}).then(result => {
+								const { response, body } = result;
+								assert.strictEqual(response.statusCode, 400);
+								const $ = cheerio.load(body);
+								assert.match($('.form-errors').text(), new RegExp(`"${label}" is required`));
+							});
+						});
+					});
+
+					it('invalid password', function() {
+						return this.helpers.request('post', {
+							url: `${config.lnurl.url}/admin/login`,
+							form: { password: 'incorrect' },
+						}).then(result => {
+							const { body, response } = result;
+							assert.strictEqual(response.statusCode, 400);
+							const $ = cheerio.load(body);
+							assert.match($('.form-errors').text(), /Password was incorrect/);
+						});
+					});
+
+					it('valid form data', function() {
+						return this.helpers.request('post', {
+							url: `${config.lnurl.url}/admin/login`,
+							form: validFormData,
+						}).then(loginResult => {
+							assert.strictEqual(loginResult.response.statusCode, 302);
+							assert.strictEqual(loginResult.body, 'Found. Redirecting to /admin');
+							assert.ok(loginResult.response.headers['set-cookie']);
+							const cookie = loginResult.response.headers['set-cookie'][0];
+							return this.helpers.request('get', {
+								url: `${config.lnurl.url}/admin/overview`,
+								headers: { cookie },
+							}).then(overviewResult => {
+								assert.strictEqual(overviewResult.response.statusCode, 200);
+								const $ = cheerio.load(overviewResult.body);
+								assert.match($('h1').text(), /Overview/);
+								assert.strictEqual($('.box.lnurls').length, 1);
+								return this.helpers.readEnv(config.env.filePath).then(env => {
+									const prefix = '$scrypt$';
+									assert.strictEqual(env.BLESKOMAT_SERVER_ADMIN_PASSWORD.substr(0, prefix.length), prefix);
+								});
+							});
+						});
 					});
 				});
 			});
