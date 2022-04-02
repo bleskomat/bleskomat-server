@@ -34,6 +34,7 @@
     "@bleskomat/open-sans-fontface": "1.5.0",
     "@bleskomat/scrypt": "1.0.0",
     "bignumber.js": "9.0.2",
+    "bleskomat.conf": "1.1.0",
     "coin-rates": "1.1.1",
     "debug": "4.3.4",
     "dotenv": "16.0.0",
