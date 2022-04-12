@@ -657,6 +657,9 @@ input:checked + .form-switch-slider:before {
 	max-width: 30rem;
 	margin: 2rem auto 0 auto;
 }
+.form-row-type--hidden {
+	display: none;
+}
 /* FORM */
 
 /* TEMPLATES */
@@ -714,26 +717,8 @@ body.template-settings .subnav-link.active {
 body.template-settings .subnav-link + .subnav-link {
 	margin-left: .5rem;
 }
-body.template-settings #form-settings-lightning .form-group {
-	display: none;
-}
 body.template-settings #form-settings-lightning .form-group + .form-group {
 	margin-top: 0;
-}
-body.template-settings #form-settings-lightning .form-group--general,
-body.template-settings #form-settings-lightning .form-group--backend,
-body.template-settings #form-settings-lightning .form-group.visible {
-	display: block;
-}
-body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-cert,
-body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-fingerprint,
-body.template-settings #form-settings-lightning .form-group--lnd .form-row--lnd-fingerprint256 {
-	display: none;
-}
-body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-cert,
-body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-fingerprint,
-body.template-settings #form-settings-lightning .form-group--lnd.use-cert .form-row--lnd-fingerprint256 {
-	display: inline-block;
 }
 /* TEMPLATES */
 

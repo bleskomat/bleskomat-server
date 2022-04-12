@@ -41,7 +41,7 @@
     "express": "4.17.3",
     "express-handlebars": "6.0.3",
     "express-session": "1.17.2",
-    "lightning-backends": "1.1.0",
+    "lightning-backends": "1.4.0",
     "lnurl": "0.21.0",
     "lnurl-offline": "1.1.0"
   },
